@@ -2,14 +2,70 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {assets} from "../assets/assets.js";
 import Input from "../components/Input.jsx";
+import { validateEmail } from "../util/validation.js";
+import axiosConfig from "../util/axiosConfig.js";
+import { API_ENDPOINTS } from "../util/apiEndpoints.js";
+import toast from "react-hot-toast";
+import { LoaderCircle } from "lucide-react";
 
 const Signup = () => {
     const[fullname, setFullname] = useState("");
     const[email, setEmail] = useState("");
     const[password, setPassword] = useState("");
     const[error, setError] = useState(null);
+    const[isLoading, setIsLoading] = useState(false);
 
     const navigate = useNavigate();
+
+    //make kog api call diri
+    const handleSubmit = async(e) => {
+        e.preventDefault();
+        setIsLoading(true);
+
+        //basic validation diri
+        if(!fullname.trim()){
+            setError("Please enter your fullname.");
+            setIsLoading(false);
+            return;
+        }
+
+        if(!validateEmail(email)){
+            setError("Please a valid email address.");
+            setIsLoading(false);
+            return;
+        }
+
+        if(!password.trim()){
+            setError("Please enter your password.");
+            setIsLoading(false);
+            return;
+        }
+
+        setError("");
+        //SIGNUP API call diri
+        try{
+            const response = await axiosConfig.post(API_ENDPOINTS.REGISTER, {
+                fullname,
+                email,
+                password,
+            })
+            if(response.status === 201){
+                toast.success("Profile created successfully.");
+                navigate("/login");
+            }
+        }catch(err){
+            console.error("Something went wrong:", err);
+            if(err.code === 'ECONNABORTED'){
+                setError("Server is waking up, this may take up to 60 seconds. Please try again.");
+            } else if(err.response){
+                setError(err.response.data?.message || "Registration failed. Please try again.");
+            } else {
+                setError("Unable to connect to server. Please try again.");
+            }
+        }finally{
+            setIsLoading(false);
+        }
+    }
 
     return (
         <div className="h-screen w-full relative flex items-center justify-center overflow-hidden">
@@ -25,7 +81,7 @@ const Signup = () => {
                         Start Tracking your spendings by joining with us.
                     </p>
 
-                    <form className="space-y-4">
+                    <form onSubmit={handleSubmit} className="space-y-4">
                         <div className="flex justify-center mb-6">
                             {/* profile img ni diri */}
                         </div>
@@ -63,8 +119,13 @@ const Signup = () => {
                             </p>
                         )}
 
-                        <button className="w-full py-3 text-lg font-medium bg-[#f69fbc] text-white rounded-lg hover:bg-[#e87fa8] transition-colors" type="submit">
-                            SIGN UP
+                        <button disabled={isLoading} className={`btn-primary w-full py-3 text-lg font-medium bg-[#f69fbc] text-white rounded-lg hover:bg-[#e87fa8] transition-colors flex items-center justify-center gap-2 ${isLoading ? 'opacity-60 cursor-not-allowed': ''}`} type="submit">
+                            {isLoading ? (
+                                <>
+                                    <LoaderCircle className="animate-spin w-5 h-5"/>
+                                    Signing up...
+                                </>
+                            ): ("SIGN UP")}
                         </button>
 
                         <p className="text-sm text-slate-800 text-center mt-6">
