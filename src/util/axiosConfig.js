@@ -4,6 +4,7 @@ import { BASE_URL } from "./apiEndpoints";
 
 const axiosConfig = axios.create({
     baseURL: BASE_URL,
+    timeout: 60000, // 60 seconds to account for cold starts
     headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
@@ -48,3 +49,5 @@ axiosConfig.interceptors.response.use((response) => {
     }
     return Promise.reject(error);
 });
+
+export default axiosConfig;
