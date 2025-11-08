@@ -1,6 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Income from "./pages/Income";
-import Home from "./pages/Home";
+import Dashboard from "./pages/Dashboard";
 import Expense from "./pages/Expense";
 import Category from "./pages/Category";
 import Filter from "./pages/Filter";
@@ -17,7 +17,7 @@ const App = () => {
       <Toaster />
       <BrowserRouter>
         <Routes>
-            <Route path = "/dashboard" element={<Home />} />
+            <Route path = "/dashboard" element={<Dashboard />} />
             <Route path = "/income" element={<Income />} />
             <Route path = "/expense" element={<Expense />} />
             <Route path = "/category" element={<Category />} />

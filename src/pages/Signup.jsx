@@ -7,6 +7,7 @@ import axiosConfig from "../util/axiosConfig.js";
 import { API_ENDPOINTS } from "../util/apiEndpoints.js";
 import toast from "react-hot-toast";
 import { LoaderCircle } from "lucide-react";
+import ProfilePhotoSelector from "../components/ProfilePhotoSelector.jsx";
 
 const Signup = () => {
     const[fullname, setFullname] = useState("");
@@ -14,6 +15,7 @@ const Signup = () => {
     const[password, setPassword] = useState("");
     const[error, setError] = useState(null);
     const[isLoading, setIsLoading] = useState(false);
+    const[profilePhoto, setProfilePhoto] = useState(null);
 
     const navigate = useNavigate();
 
@@ -83,7 +85,7 @@ const Signup = () => {
 
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div className="flex justify-center mb-6">
-                            {/* profile img ni diri */}
+                            <ProfilePhotoSelector image={profilePhoto} setImage={setProfilePhoto}/>
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                             <Input
