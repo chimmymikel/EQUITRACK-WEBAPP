@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Mail, Phone, MapPin, Facebook, Instagram, Send } from 'lucide-react';
+import { Mail, Phone, MapPin, Facebook, Instagram, Send, Wallet, Zap, MessageCircle, CheckCircle } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const ContactUs = () => {
     const [formData, setFormData] = useState({
@@ -72,82 +73,153 @@ const ContactUs = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center p-4 sm:p-6 lg:p-8" 
-            style={{ background: 'linear-gradient(135deg, #0b617e 0%, #0a4d63 50%, #083e50 100%)' }}>
+        <div className="min-h-screen w-full relative flex items-center justify-center overflow-hidden bg-gradient-to-br from-slate-900 via-[#084062] to-blue-900 p-4 pt-20">
             
-            <div className="w-full max-w-6xl bg-white/10 backdrop-blur-lg rounded-3xl shadow-2xl overflow-hidden border border-white/20">
-                <div className="grid md:grid-cols-2 gap-0">
-                    
-                    {/* Contact Info */}
-                    <div className="p-8 lg:p-12 bg-gradient-to-br from-[#0a5570] to-[#083e50] text-white flex flex-col justify-center">
-                        <div className="space-y-8">
-                            <div className="space-y-4">
-                                <h1 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-yellow-300 to-orange-400 bg-clip-text text-transparent">
-                                    Contact Us
-                                </h1>
-                                <p className="text-lg text-white/90 leading-relaxed">
-                                    Have questions, feedback, or ideas to make EquiTrack even better? We'd love to hear from you!
-                                </p>
+            {/* Animated Background Elements */}
+            <div className="absolute inset-0 overflow-hidden">
+                <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-yellow-400 rounded-full blur-3xl opacity-20 animate-pulse"></div>
+                <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-400 rounded-full blur-3xl opacity-20 animate-pulse" style={{ animationDelay: '2s' }}></div>
+                <div className="absolute top-3/4 left-1/3 w-48 h-48 bg-cyan-400 rounded-full blur-3xl opacity-15 animate-pulse" style={{ animationDelay: '4s' }}></div>
+                <div className="absolute top-1/2 right-1/3 w-72 h-72 bg-purple-400 rounded-full blur-3xl opacity-10 animate-pulse" style={{ animationDelay: '6s' }}></div>
+            </div>
+            
+            {/* Main Content Container */}
+            <div className="relative z-10 w-full max-w-6xl flex flex-col lg:flex-row items-stretch justify-between gap-8">
+                
+                {/* Left Side - Contact Info */}
+                <div className="flex-1 max-w-lg text-white space-y-8">
+                    <div className="space-y-6">
+                        <Link to="/" className="flex items-center gap-3 group">
+                            <div className="w-14 h-14 bg-yellow-400 rounded-2xl flex items-center justify-center transform group-hover:scale-110 group-hover:rotate-12 transition-all duration-300 shadow-xl shadow-yellow-400/30">
+                                <Wallet className="w-8 h-8 text-blue-900" />
                             </div>
+                            <span className="text-4xl font-black tracking-tight">
+                                Equi<span className="text-yellow-400">Track</span>
+                            </span>
+                        </Link>
 
-                            <div className="space-y-6">
-                                <a href="https://mail.google.com/mail/?view=cm&fs=1&to=sonephoenix46@gmail.com" target="_blank" rel="noopener noreferrer" className="flex items-start space-x-4 group cursor-pointer">
-                                    <div className="mt-1 p-3 bg-white/10 rounded-lg group-hover:bg-white/20 transition-colors">
-                                        <Mail className="w-5 h-5" />
-                                    </div>
-                                    <div>
-                                        <p className="text-sm text-white/70 mb-1">Email</p>
-                                        <p className="text-white font-medium hover:underline">sonephoenix46@gmail.com</p>
-                                    </div>
-                                </a>
+                        <div className="space-y-4">
+                            <h1 className="text-5xl lg:text-6xl font-black leading-tight tracking-tight">
+                                <span className="text-yellow-400">Contact</span> Us
+                            </h1>
+                            
+                            <p className="text-lg text-gray-200 leading-relaxed">
+                                Have questions, feedback, or ideas? We'd love to hear from you! Our team is here to help.
+                            </p>
+                        </div>
+                    </div>
 
-                                <a href="tel:+639123456789" className="flex items-start space-x-4 group cursor-pointer">
-                                    <div className="mt-1 p-3 bg-white/10 rounded-lg group-hover:bg-white/20 transition-colors">
-                                        <Phone className="w-5 h-5" />
-                                    </div>
-                                    <div>
-                                        <p className="text-sm text-white/70 mb-1">Phone</p>
-                                        <p className="text-white font-medium hover:underline">+63 926 154 0612</p>
-                                    </div>
-                                </a>
-
-                                <div className="flex items-start space-x-4 group">
-                                    <div className="mt-1 p-3 bg-white/10 rounded-lg group-hover:bg-white/20 transition-colors">
-                                        <MapPin className="w-5 h-5" />
-                                    </div>
-                                    <div>
-                                        <p className="text-sm text-white/70 mb-1">Address</p>
-                                        <p className="text-white font-medium">CIT University, Cebu City, Philippines</p>
-                                    </div>
-                                </div>
+                    {/* Contact Methods - More Compact */}
+                    <div className="space-y-4">
+                        {/* Email */}
+                        <a 
+                            href="https://mail.google.com/mail/?view=cm&fs=1&to=equitrack1@gmail.com&su=Inquiry%20about%20EquiTrack&body=Hello%20EquiTrack%20Team,%0A%0AI%20would%20like%20to%20get%20in%20touch%20with%20you%20regarding%20EquiTrack." 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            className="flex items-center gap-3 group cursor-pointer hover:transform hover:translate-x-1 transition-all duration-300 bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10 hover:border-yellow-400/50 hover:bg-white/10"
+                        >
+                            <div className="p-2.5 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-lg group-hover:scale-110 transition-transform duration-300 shadow-lg flex-shrink-0">
+                                <Mail className="w-5 h-5 text-white" />
                             </div>
+                            <div className="flex-1">
+                                <p className="text-xs text-gray-400 mb-0.5">Email Us</p>
+                                <span className="text-white font-medium group-hover:text-yellow-400 transition-colors text-sm">equitrack1@gmail.com</span>
+                            </div>
+                        </a>
 
-                            <div className="pt-6">
-                                <p className="text-sm text-white/70 mb-4">Connect with us</p>
-                                <div className="flex space-x-4">
-                                    <a href="https://facebook.com/ashley.igonia" target="_blank" rel="noopener noreferrer" className="p-3 bg-white/10 hover:bg-white/20 rounded-lg transition-all hover:scale-110 transform">
-                                        <Facebook className="w-6 h-6" />
-                                    </a>
-                                    <a href="https://instagram.com/carrydashes" target="_blank" rel="noopener noreferrer" className="p-3 bg-white/10 hover:bg-white/20 rounded-lg transition-all hover:scale-110 transform">
-                                        <Instagram className="w-6 h-6" />
-                                    </a>
-                                    <a href="https://t.me/yourusername" target="_blank" rel="noopener noreferrer" className="p-3 bg-white/10 hover:bg-white/20 rounded-lg transition-all hover:scale-110 transform">
-                                        <Send className="w-6 h-6" />
-                                    </a>
-                                    <a href="mailto:sonephoenix46@gmail.com" className="p-3 bg-white/10 hover:bg-white/20 rounded-lg transition-all hover:scale-110 transform">
-                                        <Mail className="w-6 h-6" />
-                                    </a>
-                                </div>
+                        {/* Phone */}
+                        <a 
+                            href="tel:+639261540612" 
+                            className="flex items-center gap-3 group cursor-pointer hover:transform hover:translate-x-1 transition-all duration-300 bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10 hover:border-yellow-400/50 hover:bg-white/10"
+                        >
+                            <div className="p-2.5 bg-gradient-to-br from-blue-400 to-cyan-500 rounded-lg group-hover:scale-110 transition-transform duration-300 shadow-lg flex-shrink-0">
+                                <Phone className="w-5 h-5 text-white" />
+                            </div>
+                            <div className="flex-1">
+                                <p className="text-xs text-gray-400 mb-0.5">Call Us</p>
+                                <span className="text-white font-medium group-hover:text-yellow-400 transition-colors text-sm">+63 926 154 0612</span>
+                            </div>
+                        </a>
+
+                        {/* Address */}
+                        <div className="flex items-center gap-3 group hover:transform hover:translate-x-1 transition-all duration-300 bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10 hover:border-yellow-400/50 hover:bg-white/10 cursor-pointer">
+                            <div className="p-2.5 bg-gradient-to-br from-purple-400 to-pink-500 rounded-lg group-hover:scale-110 transition-transform duration-300 shadow-lg flex-shrink-0">
+                                <MapPin className="w-5 h-5 text-white" />
+                            </div>
+                            <div className="flex-1">
+                                <p className="text-xs text-gray-400 mb-0.5">Visit Us</p>
+                                <span className="text-white font-medium group-hover:text-yellow-400 transition-colors text-sm">
+                                    CIT University, Cebu City
+                                </span>
                             </div>
                         </div>
                     </div>
 
-                    {/* Contact Form */}
-                    <div className="p-8 lg:p-12 bg-white flex flex-col justify-center">
-                        <div className="space-y-6">
-                            <div>
-                                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-                                    Your Name
+                    {/* Social Links - Compact */}
+                    <div className="space-y-3">
+                        <div className="flex items-center gap-2">
+                            <MessageCircle className="w-4 h-4 text-yellow-400" />
+                            <p className="text-sm text-gray-300 font-medium">Connect with us</p>
+                        </div>
+                        <div className="flex gap-3">
+                            <a 
+                                href="https://www.facebook.com/profile.php?id=61582991625112" 
+                                target="_blank" 
+                                rel="noopener noreferrer" 
+                                className="p-3 bg-white/10 hover:bg-blue-600 rounded-xl transition-all duration-300 hover:scale-110 transform group backdrop-blur-sm border border-white/10"
+                            >
+                                <Facebook className="w-5 h-5" />
+                            </a>
+                            
+                            <a 
+                                href="https://www.instagram.com/equitrack1/" 
+                                target="_blank" 
+                                rel="noopener noreferrer" 
+                                className="p-3 bg-white/10 hover:bg-pink-600 rounded-xl transition-all duration-300 hover:scale-110 transform group backdrop-blur-sm border border-white/10"
+                            >
+                                <Instagram className="w-5 h-5" />
+                            </a>
+                            
+                            <a 
+                                href="https://t.me/yourusername" 
+                                target="_blank" 
+                                rel="noopener noreferrer" 
+                                className="p-3 bg-white/10 hover:bg-blue-500 rounded-xl transition-all duration-300 hover:scale-110 transform group backdrop-blur-sm border border-white/10"
+                            >
+                                <Send className="w-5 h-5" />
+                            </a>
+                            
+                            <a 
+                                href="https://mail.google.com/mail/?view=cm&fs=1&to=equitrack1@gmail.com&su=Inquiry%20about%20EquiTrack" 
+                                target="_blank" 
+                                rel="noopener noreferrer" 
+                                className="p-3 bg-white/10 hover:bg-yellow-400 hover:text-gray-900 rounded-xl transition-all duration-300 hover:scale-110 transform group backdrop-blur-sm border border-white/10"
+                            >
+                                <Mail className="w-5 h-5" />
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Right Side - Contact Form */}
+                <div className="flex-1 max-w-md">
+                    <div className="bg-white/10 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/20 p-8">
+                        
+                        {/* Form Header */}
+                        <div className="text-center mb-6">
+                            <h2 className="text-3xl font-black text-white mb-2">
+                                Send a <span className="text-yellow-400">Message</span>
+                            </h2>
+                            <p className="text-gray-200 text-sm">
+                                We'll respond within 24 hours
+                            </p>
+                        </div>
+
+                        <form onSubmit={handleSubmit} className="space-y-4">
+                            {/* Name Input */}
+                            <div className="space-y-2">
+                                <label htmlFor="name" className="text-white font-medium text-sm">
+                                    Full Name
                                 </label>
                                 <input
                                     type="text"
@@ -155,18 +227,19 @@ const ContactUs = () => {
                                     name="name"
                                     value={formData.name}
                                     onChange={handleChange}
-                                    placeholder="Enter your name"
-                                    className={`w-full px-4 py-3 rounded-lg border-2 transition-all focus:outline-none focus:ring-2 focus:ring-[#0b617e] ${
-                                        errors.name ? 'border-red-500' : 'border-gray-200'
+                                    placeholder="Enter your full name"
+                                    className={`w-full px-4 py-3 bg-white/5 border rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 transition-all duration-300 ${
+                                        errors.name ? 'border-red-400/50' : 'border-white/20'
                                     }`}
                                 />
                                 {errors.name && (
-                                    <p className="mt-1 text-sm text-red-500">{errors.name}</p>
+                                    <p className="text-red-300 text-xs">{errors.name}</p>
                                 )}
                             </div>
 
-                            <div>
-                                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                            {/* Email Input */}
+                            <div className="space-y-2">
+                                <label htmlFor="email" className="text-white font-medium text-sm">
                                     Email Address
                                 </label>
                                 <input
@@ -175,18 +248,19 @@ const ContactUs = () => {
                                     name="email"
                                     value={formData.email}
                                     onChange={handleChange}
-                                    placeholder="Enter a valid email address"
-                                    className={`w-full px-4 py-3 rounded-lg border-2 transition-all focus:outline-none focus:ring-2 focus:ring-[#0b617e] ${
-                                        errors.email ? 'border-red-500' : 'border-gray-200'
+                                    placeholder="your.email@example.com"
+                                    className={`w-full px-4 py-3 bg-white/5 border rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 transition-all duration-300 ${
+                                        errors.email ? 'border-red-400/50' : 'border-white/20'
                                     }`}
                                 />
                                 {errors.email && (
-                                    <p className="mt-1 text-sm text-red-500">{errors.email}</p>
+                                    <p className="text-red-300 text-xs">{errors.email}</p>
                                 )}
                             </div>
 
-                            <div>
-                                <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
+                            {/* Message Input */}
+                            <div className="space-y-2">
+                                <label htmlFor="message" className="text-white font-medium text-sm">
                                     Your Message
                                 </label>
                                 <textarea
@@ -194,36 +268,62 @@ const ContactUs = () => {
                                     name="message"
                                     value={formData.message}
                                     onChange={handleChange}
-                                    placeholder="Enter your message"
-                                    rows="5"
-                                    className={`w-full px-4 py-3 rounded-lg border-2 transition-all focus:outline-none focus:ring-2 focus:ring-[#0b617e] resize-none ${
-                                        errors.message ? 'border-red-500' : 'border-gray-200'
+                                    placeholder="How can we help you?"
+                                    rows="4"
+                                    className={`w-full px-4 py-3 bg-white/5 border rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 transition-all duration-300 resize-none ${
+                                        errors.message ? 'border-red-400/50' : 'border-white/20'
                                     }`}
                                 />
                                 {errors.message && (
-                                    <p className="mt-1 text-sm text-red-500">{errors.message}</p>
+                                    <p className="text-red-300 text-xs">{errors.message}</p>
                                 )}
                             </div>
 
+                            {/* Success Message */}
                             {submitStatus === 'success' && (
-                                <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
-                                    <p className="text-green-700 text-sm font-medium">
-                                        Thank you! Your message has been sent successfully.
+                                <div className="p-3 bg-green-500/20 border border-green-400/50 rounded-xl">
+                                    <p className="text-green-200 text-xs text-center font-medium">
+                                        ✅ Message sent successfully! We'll get back to you soon.
                                     </p>
                                 </div>
                             )}
 
+                            {/* Submit Button */}
                             <button
-                                onClick={handleSubmit}
+                                type="submit"
                                 disabled={isSubmitting}
-                                className="w-full hover:shadow-lg text-white font-bold py-4 px-6 rounded-lg transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
-                                style={{ backgroundColor: '#f69fbc' }}
-                                onMouseEnter={(e) => e.target.style.backgroundColor = '#f587ad'}
-                                onMouseLeave={(e) => e.target.style.backgroundColor = '#f69fbc'}
+                                className="w-full bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold py-3.5 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-2xl hover:shadow-yellow-400/30 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:shadow-none group"
                             >
-                                {isSubmitting ? 'Sending...' : 'SUBMIT'}
+                                <span className="flex items-center justify-center gap-2">
+                                    {isSubmitting ? (
+                                        <>
+                                            <div className="w-4 h-4 border-2 border-gray-900 border-t-transparent rounded-full animate-spin"></div>
+                                            Sending...
+                                        </>
+                                    ) : (
+                                        <>
+                                            Send Message
+                                            <Zap className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                                        </>
+                                    )}
+                                </span>
                             </button>
-                        </div>
+
+                            {/* Telegram Quick Link */}
+                            <div className="text-center pt-2">
+                                <p className="text-gray-300 text-xs">
+                                    💬 Quick chat?{' '}
+                                    <a 
+                                        href="https://t.me/yourusername" 
+                                        target="_blank" 
+                                        rel="noopener noreferrer" 
+                                        className="text-yellow-400 hover:text-yellow-300 font-bold underline transition-colors duration-300"
+                                    >
+                                        Message us on Telegram
+                                    </a>
+                                </p>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
