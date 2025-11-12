@@ -1,6 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Income from "./pages/Income";
-import Dashboard from "./pages/Dashboard";
 import Expense from "./pages/Expense";
 import Category from "./pages/Category";
 import Filter from "./pages/Filter";
@@ -9,6 +8,7 @@ import Signup from "./pages/Signup";
 import { Toaster } from "react-hot-toast";
 import AboutUs from "./pages/AboutUs";
 import ContactUs from "./pages/ContactUs";
+import Home from "./pages/Home";
 
 const App = () => {
 
@@ -17,7 +17,7 @@ const App = () => {
       <Toaster />
       <BrowserRouter>
         <Routes>
-            <Route path = "/dashboard" element={<Dashboard />} />
+            <Route path = "/dashboard" element={<Home />} />
             <Route path = "/income" element={<Income />} />
             <Route path = "/expense" element={<Expense />} />
             <Route path = "/category" element={<Category />} />

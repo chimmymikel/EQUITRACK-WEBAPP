@@ -9,6 +9,7 @@ import { LoaderCircle, Eye, EyeOff, Wallet, Shield, Zap } from "lucide-react";
 import { validateEmail } from "../util/validation.js";
 
 const Login = () => {
+  const [fullname, setFullname] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -39,9 +40,14 @@ const Login = () => {
     
     try {
       const response = await axiosConfig.post("/login", {
+        fullname,
         email,
         password,
       });
+
+      console.log("🔍 Full API Response:", response.data);
+      console.log("👤 User object:", response.data.user);
+      console.log("📝 User fullname:", response.data.user?.fullname);
       const { token, user } = response.data;
       if (token) {
         localStorage.setItem("token", token);
