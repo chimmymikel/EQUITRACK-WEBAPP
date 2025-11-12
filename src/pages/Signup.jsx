@@ -155,20 +155,12 @@ const Signup = () => {
                 const imageUrl = await uploadProfileImage(profilePhoto);
                 profileImageUrl = imageUrl || "";
             }
-            
-            const registrationData = {
+            const response = await axiosConfig.post(API_ENDPOINTS.REGISTER, {
                 fullName: fullname,
                 email,
                 password,
                 profileImageUrl,
-            };
-
-            console.log("📤 Sending to backend:", registrationData);
-
-            const response = await axiosConfig.post(API_ENDPOINTS.REGISTER, registrationData);
-            
-            console.log("✅ Backend response:", response.data);
-            
+            })
             if(response.status === 201){
                 toast.success("Profile created successfully!");
                 navigate("/login");
