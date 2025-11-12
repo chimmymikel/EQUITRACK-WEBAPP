@@ -45,6 +45,10 @@ const Login = () => {
         password,
       });
 
+      //console.log("🔍 Full API Response:", response.data);
+      //console.log("👤 User object:", response.data.user);
+      //console.log("📝 User fullname:", response.data.user?.fullName);
+      
       const { token, user } = response.data;
       if (token) {
         localStorage.setItem("token", token);
