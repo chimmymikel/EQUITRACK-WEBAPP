@@ -117,7 +117,7 @@ const Login = () => {
               </div>
               <div>
                 <h3 className="font-bold text-lg">Secure & Protected</h3>
-                <p className="text-gray-300">Bank-level security for your financial data</p>
+                <p className="text-gray-300">Your financial data is safe and encrypted</p>
               </div>
             </div>
 
@@ -126,8 +126,8 @@ const Login = () => {
                 <Zap className="w-6 h-6" />
               </div>
               <div>
-                <h3 className="font-bold text-lg">Real-time Insights</h3>
-                <p className="text-gray-300">Instant updates on your financial health</p>
+                <h3 className="font-bold text-lg">Real-time Updates</h3>
+                <p className="text-gray-300">See your income and expenses instantly</p>
               </div>
             </div>
 
@@ -137,7 +137,7 @@ const Login = () => {
               </div>
               <div>
                 <h3 className="font-bold text-lg">Smart Budgeting</h3>
-                <p className="text-gray-300">AI-powered suggestions to maximize savings</p>
+                <p className="text-gray-300">Set spending limits and track your categories</p>
               </div>
             </div>
           </div>
@@ -255,7 +255,7 @@ const Login = () => {
               <div className="flex items-center gap-3">
                 <Shield className="w-5 h-5 text-yellow-400" />
                 <p className="text-gray-300 text-sm">
-                  Your financial data is protected with bank-level security
+                  Your money is safer  with a clear mindset
                 </p>
               </div>
             </div>
