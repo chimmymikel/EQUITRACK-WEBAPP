@@ -6,6 +6,8 @@ import { useEffect, useState } from "react";
 import axiosConfig from "../util/axiosConfig";
 import { API_ENDPOINTS } from "../util/apiEndpoints";
 import toast, { Toaster } from "react-hot-toast";
+import Modal from "../components/Modal";
+import AddCategoryForm from "../components/AddCategoryForm";
 
 const Category = () => {
     useUser();
@@ -22,7 +24,7 @@ const Category = () => {
 
         try {
             const response = await axiosConfig.get(API_ENDPOINTS.GET_ALL_CATEGORIES);
-            if (response.status === 200) {
+            if (response.status === 201 || response.status === 200) {
                 console.log('categories', response.data);
                 setCategoryData(response.data);
             }
@@ -38,14 +40,37 @@ const Category = () => {
         fetchCategoryDetails();
     }, []);
 
+    const handleAddCategory = async (category) => {
+        const {name, type, icon} = category;
+
+        if(!name.trim()) {
+            toast.error("Category Name is required");
+            return;
+        }
+
+        try {
+            const response = await axiosConfig.post(API_ENDPOINTS.ADD_CATEGORY, {name, type, icon});
+            if (response.status === 200 || response.status === 201) {
+                toast.success("Category added successfully");
+                setOpenAddCategoryModal(false);
+                fetchCategoryDetails();
+            } 
+        }catch (error) {
+                console.error('Error adding category', error);
+                toast.error(error.response?.data?.message || "Failed to add category.");
+                return;
+        }
+    }
+
     return (
         <Dashboard activeMenu="Category">
+            <Toaster position="top-center" />
             <div className="my-5 mx-auto">
                 {/* Add button to add category */}
                 <div className="flex justify-between items-center mb-5">
                     <h2 className="text-2xl font-semibold">All Categories</h2>
                     <button 
-
+                        onClick={() => setOpenAddCategoryModal(true)}
                         className="add-btn flex items-center gap-1">
                         <Plus size={15} />
                         Add Category
@@ -53,9 +78,16 @@ const Category = () => {
                 </div>
 
                 {/* Category list */}
-                <CategoryList />
+                <CategoryList categories={categoryData} />
 
-                {/* Ading category modal */}
+                {/* Adding category modal */}
+                <Modal
+                    isOpen={openAddCategoryModal}
+                    onClose={() => setOpenAddCategoryModal(false)}
+                    title="Add Category"
+                >
+                    <AddCategoryForm onAddCategory={handleAddCategory}/>
+                </Modal>
 
                 {/* Updating category modal */}
             </div>
@@ -63,4 +95,4 @@ const Category = () => {
     )
 }
 
-export default Category;    
+export default Category;
