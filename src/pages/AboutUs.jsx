@@ -53,7 +53,7 @@ const HeartIcon = () => (
 // --- ICONS FOR CORE VALUES ---
 const CheckCircleIcon = () => (
   <svg className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 01118 0z" />
   </svg>
 );
 
@@ -112,6 +112,58 @@ const useScrollAnimation = () => {
   }, []);
 
   return [ref, isVisible];
+};
+
+// --- Enhanced Scroll Indicator Component ---
+const EnhancedScrollIndicator = () => {
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [isVisible, setIsVisible] = useState(true);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = (scrollTop / docHeight) * 100;
+      
+      setScrollProgress(progress);
+      
+      // Hide main indicator after user starts scrolling
+      if (scrollTop > 100) {
+        setIsVisible(false);
+      } else {
+        setIsVisible(true);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  return (
+    <>
+      {/* Progress Bar at top */}
+      <div className="fixed top-0 left-0 w-full h-1 bg-slate-700/50 z-50">
+        <div 
+          className="h-full bg-yellow-400 transition-all duration-300 ease-out"
+          style={{ width: `${scrollProgress}%` }}
+        ></div>
+      </div>
+
+      {/* Animated Scroll Indicator - Only show when at top */}
+      {isVisible && (
+        <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-40">
+          <div className="flex flex-col items-center gap-3 animate-bounce">
+            <span className="text-white text-sm font-medium bg-black/50 backdrop-blur-sm px-4 py-2 rounded-full border border-yellow-400/30 shadow-lg">
+              Scroll to explore more
+            </span>
+            <div className="w-8 h-12 border-2 border-yellow-400 rounded-full flex justify-center relative shadow-lg">
+              <div className="w-1.5 h-4 bg-yellow-400 rounded-full mt-2 animate-pulse"></div>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
 };
 
 // --- Header Component (CUSTOM #084062 THEME) ---
@@ -330,12 +382,18 @@ const AboutUs = () => {
       style={{ backgroundColor: '#084062' }}
     >
       <Header />
+      
+      {/* Enhanced Scroll Indicator System */}
+      <EnhancedScrollIndicator />
 
       <main>
         {/* Hero Section - Deep Navy Blue */}
         <section 
           className="relative min-h-screen flex items-center justify-center overflow-hidden pt-32 pb-16 bg-gradient-to-br from-slate-900 via-[#084062] to-blue-900"
         >
+          {/* Visual Cue Gradient at Bottom */}
+          <div className="absolute bottom-0 left-0 w-full h-40 bg-gradient-to-t from-slate-900 via-slate-900/70 to-transparent pointer-events-none z-20"></div>
+          
           <div className="absolute inset-0 opacity-10">
             <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-yellow-400 rounded-full blur-3xl"></div>
             <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-400 rounded-full blur-3xl"></div>
