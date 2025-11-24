@@ -48,6 +48,17 @@ const Category = () => {
             return;
         }
 
+        //check if the category already exists, dli ni ai ha basin ai napod nya ni grrr
+        const isDuplicate = categoryData.some((category) => {
+            return category.name.toLowerCase() === name.trim().toLowerCase();
+        })
+
+        if(isDuplicate) {
+            toast.error("Category name already exists");
+            return;
+        }
+
+
         try {
             const response = await axiosConfig.post(API_ENDPOINTS.ADD_CATEGORY, {name, type, icon});
             if (response.status === 200 || response.status === 201) {
@@ -60,6 +71,37 @@ const Category = () => {
                 toast.error(error.response?.data?.message || "Failed to add category.");
                 return;
         }
+    }
+
+    const handleEditCategory = (categoryToEdit) => {
+        setSelectedCategory(categoryToEdit);
+        setOpenEditCategoryModal(true);
+    }
+
+    const handleUpdateCategory = async (updatedCategory) => {
+        const {id, name, type, icon} =  updatedCategory;
+
+        if(!name.trim()) {
+            toast.error("Category Name is required");
+            return;
+        }
+
+        if(!id) {
+            toast.error("Invalid category ID");
+            return;
+        }
+
+        try{
+            await axiosConfig.put(API_ENDPOINTS.UPDATE_CATEGORY(id), {name, type, icon});
+            setOpenEditCategoryModal(false);
+            setSelectedCategory(null);
+            toast.success("Category updated successfully");
+            fetchCategoryDetails();
+        }catch(error) {
+            console.error('Error updating category', error.response?.data?.message || error.message);
+            toast.error(error.response?.data?.message || "Failed to update category.");
+        }
+
     }
 
     return (
@@ -78,7 +120,7 @@ const Category = () => {
                 </div>
 
                 {/* Category list */}
-                <CategoryList categories={categoryData} />
+                <CategoryList categories={categoryData} onEditCategory={handleEditCategory}/>
 
                 {/* Adding category modal */}
                 <Modal
@@ -90,6 +132,23 @@ const Category = () => {
                 </Modal>
 
                 {/* Updating category modal */}
+                <Modal
+                    onClose={() => {
+                        setOpenEditCategoryModal(false);
+                        setSelectedCategory(null);
+                    }}
+                    isOpen={openEditCategoryModal}
+                    title="Update Category"
+                >
+                    
+
+                    <AddCategoryForm
+                        initialCategoryData={selectedCategory}
+                        onAddCategory={handleUpdateCategory}
+                        isEditing={true}
+
+                    />
+                </Modal>
             </div>
         </Dashboard>
     )
