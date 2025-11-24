@@ -68,7 +68,7 @@ const Signup = () => {
             }
         };
 
-        const sizeClass = size === "lg" ? "w-20 h-20" : "w-16 h-16";
+        const sizeClass = size === "lg" ? "w-20 h-20 md:w-24 md:h-24" : "w-16 h-16";
 
         return (
             <div className="flex flex-col items-center space-y-2">
@@ -81,7 +81,7 @@ const Signup = () => {
                                 className="w-full h-full object-cover"
                             />
                         ) : (
-                            <User className="w-8 h-8 text-white" />
+                            <User className="w-8 h-8 md:w-10 md:h-10 text-white" />
                         )}
                         
                         {/* Camera overlay */}
@@ -170,37 +170,37 @@ const Signup = () => {
     }
 
     return (
-        <div className="h-screen w-full relative flex items-center justify-center overflow-hidden bg-gradient-to-br from-slate-900 via-[#084062] to-blue-900 p-4">
+        <div className="min-h-screen w-full relative flex items-center justify-center overflow-y-auto bg-gradient-to-br from-slate-900 via-[#084062] to-blue-900 p-4">
             
             {/* Animated Background Elements */}
-            <div className="absolute inset-0 overflow-hidden">
+            <div className="fixed inset-0 overflow-hidden pointer-events-none">
                 <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-yellow-400 rounded-full blur-3xl opacity-20 animate-pulse"></div>
                 <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-400 rounded-full blur-3xl opacity-20 animate-pulse" style={{ animationDelay: '2s' }}></div>
                 <div className="absolute top-3/4 left-1/3 w-48 h-48 bg-cyan-400 rounded-full blur-3xl opacity-15 animate-pulse" style={{ animationDelay: '4s' }}></div>
             </div>
 
             {/* Main Content Container */}
-            <div className="relative z-10 w-full max-w-6xl flex flex-col lg:flex-row items-center justify-between gap-8 h-full">
+            <div className="relative z-10 w-full max-w-6xl flex flex-col lg:flex-row items-center justify-center gap-6 lg:gap-8 py-8">
                 
-                {/* Left Side - Branding & Benefits - NOW BIGGER */}
-                <div className="flex-1 max-w-lg text-white space-y-8 pt-8">
-                    <div className="space-y-6">
+                {/* Left Side - Branding & Benefits */}
+                <div className="w-full lg:flex-1 max-w-lg text-white space-y-6 lg:space-y-8">
+                    <div className="space-y-4 lg:space-y-6">
                         <Link to="/" className="flex items-center gap-3 group">
-                            <div className="w-12 h-12 bg-yellow-400 rounded-xl flex items-center justify-center transform group-hover:scale-110 group-hover:rotate-12 transition-all duration-300 shadow-xl shadow-yellow-400/30">
-                                <Wallet className="w-6 h-6 text-blue-900" />
+                            <div className="w-10 h-10 lg:w-12 lg:h-12 bg-yellow-400 rounded-xl flex items-center justify-center transform group-hover:scale-110 group-hover:rotate-12 transition-all duration-300 shadow-xl shadow-yellow-400/30">
+                                <Wallet className="w-5 h-5 lg:w-6 lg:h-6 text-blue-900" />
                             </div>
-                            <span className="text-3xl font-black tracking-tight">
+                            <span className="text-2xl lg:text-3xl font-black tracking-tight">
                                 Equi<span className="text-yellow-400">Track</span>
                             </span>
                         </Link>
 
-                        <div className="space-y-4">
-                            <h1 className="text-4xl font-black leading-tight">
+                        <div className="space-y-3 lg:space-y-4">
+                            <h1 className="text-3xl lg:text-4xl font-black leading-tight">
                                 Start Your
-                                <span className="block text-yellow-400 mt-2">Financial Journey</span>
+                                <span className="block text-yellow-400 mt-1 lg:mt-2">Financial Journey</span>
                             </h1>
                             
-                            <p className="text-lg text-gray-200 leading-relaxed">
+                            <p className="text-base lg:text-lg text-gray-200 leading-relaxed">
                                 Join EquiTrack and take the first step towards financial clarity and control. 
                                 It's free, simple, and designed for students and young professionals.
                             </p>
@@ -208,41 +208,41 @@ const Signup = () => {
                     </div>
 
                     {/* Benefits List */}
-                    <div className="space-y-4">
-                        <div className="flex items-start gap-3 text-gray-200 text-base">
-                            <CheckCircle className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
+                    <div className="space-y-3 lg:space-y-4">
+                        <div className="flex items-start gap-3 text-gray-200 text-sm lg:text-base">
+                            <CheckCircle className="w-4 h-4 lg:w-5 lg:h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
                             <span className="leading-relaxed">Track expenses and income in real-time</span>
                         </div>
-                        <div className="flex items-start gap-3 text-gray-200 text-base">
-                            <CheckCircle className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
+                        <div className="flex items-start gap-3 text-gray-200 text-sm lg:text-base">
+                            <CheckCircle className="w-4 h-4 lg:w-5 lg:h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
                             <span className="leading-relaxed">Smart budgeting tools and insights</span>
                         </div>
-                        <div className="flex items-start gap-3 text-gray-200 text-base">
-                            <CheckCircle className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
+                        <div className="flex items-start gap-3 text-gray-200 text-sm lg:text-base">
+                            <CheckCircle className="w-4 h-4 lg:w-5 lg:h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
                             <span className="leading-relaxed">Secure and private data protection</span>
                         </div>
-                        <div className="flex items-start gap-3 text-gray-200 text-base">
-                            <CheckCircle className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
+                        <div className="flex items-start gap-3 text-gray-200 text-sm lg:text-base">
+                            <CheckCircle className="w-4 h-4 lg:w-5 lg:h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
                             <span className="leading-relaxed">Customizable financial categories</span>
                         </div>
                     </div>
 
                     {/* Trust Indicators */}
-                    <div className="pt-4 space-y-3 border-t border-white/10">
-                        <div className="flex items-center gap-3 text-gray-300 text-sm">
-                            <Shield className="w-4 h-4 text-yellow-400 flex-shrink-0" />
+                    <div className="pt-3 lg:pt-4 space-y-2 lg:space-y-3 border-t border-white/10">
+                        <div className="flex items-center gap-3 text-gray-300 text-xs lg:text-sm">
+                            <Shield className="w-3 h-3 lg:w-4 lg:h-4 text-yellow-400 flex-shrink-0" />
                             <span>Built by CIT-U students for the community</span>
                         </div>
-                        <div className="flex items-center gap-3 text-gray-300 text-sm">
-                            <TrendingUp className="w-4 h-4 text-yellow-400 flex-shrink-0" />
+                        <div className="flex items-center gap-3 text-gray-300 text-xs lg:text-sm">
+                            <TrendingUp className="w-3 h-3 lg:w-4 lg:h-4 text-yellow-400 flex-shrink-0" />
                             <span>Completely free to use</span>
                         </div>
                     </div>
                 </div>
 
                 {/* Right Side - Signup Form */}
-                <div className="flex-1 max-w-md">
-                    <div className="bg-white/10 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 p-6">
+                <div className="w-full lg:flex-1 max-w-md">
+                    <div className="bg-white/10 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 p-5 lg:p-6">
                         
                         {/* Form Header */}
                         <div className="text-center mb-4">
