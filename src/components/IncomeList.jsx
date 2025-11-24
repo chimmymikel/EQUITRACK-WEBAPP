@@ -27,7 +27,7 @@ const IncomeList = ({transactions, onDelete}) => {
                         date={moment(income.date).format('Do MMM YYYY')}
                         amount={income.amount}
                         type="income"
-                        onClick={() => onDelete(income.id)}
+                        onDelete={() => onDelete(income.id)}
                     />
                 ))}
             </div>
