@@ -6,11 +6,9 @@ import { API_ENDPOINTS } from "../util/apiEndpoints";
 import toast from "react-hot-toast";
 import IncomeList from "../components/IncomeList";
 import Modal from "../components/Modal";
-import { Construction, Plus } from "lucide-react";
 import AddIncomeForm from "../components/AddIncomeForm";
 import DeleteAlert from "../components/DeleteAlert";
 import IncomeOverview from "../components/IncomeOverview";
-// Removed unused axios import
 
 const Income = () => {
     useUser();
@@ -24,26 +22,34 @@ const Income = () => {
         data: null,
     });
 
-    //Fetch income details from the API
+    // Fetch income details from the API
     const fetchIncomeDetails = async () => {
-        if (loading) return;
+    if (loading) return;
 
-        setLoading(true);
+    setLoading(true);
 
-        try {
-            const response = await axiosConfig.get(API_ENDPOINTS.GET_ALL_INCOMES);
-            if (response.status === 200) {
-                setIncomeData(response.data);
-            }
-        } catch (error) {
-            console.error('Failed to fetch income details:', error);
-            toast.error(error.response?.data?.message || "Failed to fetch income details");
-        } finally {
-            setLoading(false);
+    try {
+        const response = await axiosConfig.get(API_ENDPOINTS.GET_ALL_INCOMES);
+
+        if (response.status === 200) {
+            // auto-detect correct array
+            const incomeArray =
+                response.data?.data ||    // if backend returns { data: [...] }
+                response.data?.incomes || // if backend returns { incomes: [...] }
+                response.data || [];      // if backend directly returns [...]
+
+            setIncomeData(incomeArray);
         }
+    } catch (error) {
+        console.error('Failed to fetch income details:', error);
+        toast.error(error.response?.data?.message || "Failed to fetch income details");
+    } finally {
+        setLoading(false);
     }
+}
 
-    //Fetch categories for income
+
+    // Fetch categories for income
     const fetchIncomeCategories = async () => {
         try {
             const response = await axiosConfig.get(API_ENDPOINTS.CATEGORY_BY_TYPE("income"));
@@ -53,18 +59,19 @@ const Income = () => {
             }
         } catch (error) {
             console.log('Failed to fetch income categories:', error);
-            toast.error(error.response?.data?.message || "Failed to fetch income categories"); // Fixed: error.data -> error.response.data
+            toast.error(error.response?.data?.message || "Failed to fetch income categories");
         }
     }
 
-    //save the income details
+    // Save the income details
     const handleAddIncome = async (income) => {
+        console.log('📝 Adding income:', income);
         const { name, amount, date, icon, categoryId } = income;
 
-        //validation
+        // Validation
         if (!name.trim()) {
             toast.error("Please enter a name");
-            return; // Added return
+            return;
         }
 
         if (!amount || isNaN(amount) || Number(amount) <= 0) {
@@ -89,6 +96,14 @@ const Income = () => {
         }
 
         try {
+            console.log('🚀 Sending to API:', {
+                name,
+                amount: Number(amount),
+                date,
+                icon,
+                categoryId,
+            });
+            
             const response = await axiosConfig.post(API_ENDPOINTS.ADD_INCOME, {
                 name,
                 amount: Number(amount),
@@ -96,6 +111,9 @@ const Income = () => {
                 icon,
                 categoryId,
             })
+            
+            console.log('✅ API Response:', response);
+            
             if (response.status === 201) {
                 setOpenAddIncomeModal(false);
                 toast.success("Income added successfully");
@@ -103,12 +121,13 @@ const Income = () => {
                 fetchIncomeCategories();
             }
         } catch (error) {
-            console.log('Error adding income', error);
-            toast.error(error.response?.data?.message || "Failed to add income"); // Fixed: "Failed to adding income" -> "Failed to add income"
+            console.log('❌ Error adding income:', error);
+            console.log('❌ Error response:', error.response);
+            toast.error(error.response?.data?.message || "Failed to add income");
         }
     }
 
-    //delete income details - Fixed: Added id parameter
+    // Delete income details
     const deleteIncome = async (id) => {
         try {
             await axiosConfig.delete(API_ENDPOINTS.DELETE_INCOME(id));
@@ -121,59 +140,90 @@ const Income = () => {
         }
     }
 
+    // Download income details as Excel
     const handleDownloadIncomeDetails = async () => {
+        let loadingToast;
         try {
-            const response = await axiosConfig.get(API_ENDPOINTS.INCOME_EXCEL_DOWNLOAD, { responseType: "blob" });
+            // Show loading toast
+            loadingToast = toast.loading("Downloading income details...");
+            
+            const response = await axiosConfig.get(
+                API_ENDPOINTS.INCOME_EXCEL_DOWNLOAD, 
+                { 
+                    responseType: "blob",
+                    timeout: 30000 // 30 seconds
+                }
+            );
+            
+            // Dismiss loading toast
+            toast.dismiss(loadingToast);
+            
+            // Check if response is actually a blob
+            if (!(response.data instanceof Blob)) {
+                throw new Error("Invalid response format");
+            }
+            
+            // Get filename from Content-Disposition header or use default
+            let filename = "income_details.xlsx";
+            const contentDisposition = response.headers['content-disposition'];
+            if (contentDisposition) {
+                const filenameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
+                if (filenameMatch && filenameMatch[1]) {
+                    filename = filenameMatch[1].replace(/['"]/g, '');
+                }
+            }
             
             // Create download link
-            let filename = "income_details.xlsx";
             const url = window.URL.createObjectURL(new Blob([response.data]));
             const link = document.createElement("a");
             link.href = url;
             link.setAttribute("download", filename);
             document.body.appendChild(link);
             link.click();
+            
+            // Cleanup
             link.parentNode.removeChild(link);
             window.URL.revokeObjectURL(url);
             
-            toast.success("Download income details successfully");
+            toast.success("Income details downloaded successfully");
 
         } catch (error) {
+            // Dismiss loading toast if it exists
+            if (loadingToast) {
+                toast.dismiss(loadingToast);
+            }
+            
             console.error('Error downloading income details:', error);
 
-            // --- START OF FIX ---
-            // 1. Check if the error data is a Blob (which happens because of responseType: 'blob')
+            // Handle blob error responses
             if (error.response?.data instanceof Blob) {
-                const reader = new FileReader();
-
-                // 2. Once the reader loads, parse the text back to JSON
-                reader.onload = (e) => {
-                    try {
-                        const errorData = JSON.parse(e.target.result);
-                        toast.error(errorData.message || "Failed to download income");
-                    } catch (jsonError) {
-                        // If parsing fails, show a generic error
-                        toast.error("Failed to download income");
-                    }
-                };
-
-                // 3. Trigger the reader
-                reader.readAsText(error.response.data);
+                try {
+                    const text = await error.response.data.text();
+                    const errorData = JSON.parse(text);
+                    toast.error(errorData.message || "Failed to download income details");
+                } catch (parseError) {
+                    toast.error("Failed to download income details");
+                }
+            } else if (error.response?.data?.message) {
+                toast.error(error.response.data.message);
+            } else if (error.code === 'ECONNABORTED') {
+                toast.error("Download timeout - please try again");
+            } else if (!error.response) {
+                toast.error("Network error - please check your connection");
             } else {
-                // Fallback for standard errors (like network issues)
-                toast.error(error.response?.data?.message || "Failed to download income");
+                toast.error("Failed to download income details");
             }
-            // --- END OF FIX ---
         }
     }
 
+    // Email income details
     const handleEmailIncomeDetails = async () => {
-        try{
+        try {
             const response = await axiosConfig.get(API_ENDPOINTS.EMAIL_INCOME);
-            if (response.status === 200){
+            if (response.status === 200) {
                 toast.success("Income details emailed successfully");
             }
-        }catch(error) {
+        } catch (error) {
             console.error('Error emailing income details:', error);
             toast.error(error.response?.data?.message || "Failed to email income");
         }
@@ -189,9 +239,11 @@ const Income = () => {
             <div className="my-5 mx-auto">
                 <div className="grid grid-cols-1 gap-6">
                     <div>
-                        {/*overview for income with line char */}
-                        
-                        <IncomeOverview transactions={incomeData} onAddIncome={() => setOpenAddIncomeModal(true)} />
+                        {/* Overview for income with line chart */}
+                        <IncomeOverview 
+                            transactions={incomeData} 
+                            onAddIncome={() => setOpenAddIncomeModal(true)} 
+                        />
                     </div>
 
                     <IncomeList 

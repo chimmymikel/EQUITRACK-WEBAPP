@@ -9,10 +9,9 @@ export const prepareIncomeLineChartData = (transactions) => {
     return [];
   }
 
-  // Filter only income transactions
-  const incomeTransactions = transactions.filter(
-    (t) => t.type === 'income' || t.type === 'Income'
-  );
+  // Since we're on the Income page, all transactions are already income
+  // No need to filter by type
+  const incomeTransactions = transactions;
 
   // Group transactions by month
   const monthlyData = {};
@@ -58,10 +57,9 @@ export const prepareExpenseLineChartData = (transactions) => {
     return [];
   }
 
-  // Filter only expense transactions
-  const expenseTransactions = transactions.filter(
-    (t) => t.type === 'expense' || t.type === 'Expense'
-  );
+  // Since we're on the Expense page, all transactions are already expenses
+  // No need to filter by type
+  const expenseTransactions = transactions;
 
   // Group transactions by month
   const monthlyData = {};
