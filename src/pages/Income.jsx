@@ -9,6 +9,7 @@ import Modal from "../components/Modal";
 import { Construction, Plus } from "lucide-react";
 import AddIncomeForm from "../components/AddIncomeForm";
 import DeleteAlert from "../components/DeleteAlert";
+import IncomeOverview from "../components/IncomeOverview";
 // Removed unused axios import
 
 const Income = () => {
@@ -120,6 +121,64 @@ const Income = () => {
         }
     }
 
+    const handleDownloadIncomeDetails = async () => {
+        try {
+            const response = await axiosConfig.get(API_ENDPOINTS.INCOME_EXCEL_DOWNLOAD, { responseType: "blob" });
+            
+            // Create download link
+            let filename = "income_details.xlsx";
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement("a");
+            link.href = url;
+            link.setAttribute("download", filename);
+            document.body.appendChild(link);
+            link.click();
+            link.parentNode.removeChild(link);
+            window.URL.revokeObjectURL(url);
+            
+            toast.success("Download income details successfully");
+
+        } catch (error) {
+            console.error('Error downloading income details:', error);
+
+            // --- START OF FIX ---
+            // 1. Check if the error data is a Blob (which happens because of responseType: 'blob')
+            if (error.response?.data instanceof Blob) {
+                const reader = new FileReader();
+
+                // 2. Once the reader loads, parse the text back to JSON
+                reader.onload = (e) => {
+                    try {
+                        const errorData = JSON.parse(e.target.result);
+                        toast.error(errorData.message || "Failed to download income");
+                    } catch (jsonError) {
+                        // If parsing fails, show a generic error
+                        toast.error("Failed to download income");
+                    }
+                };
+
+                // 3. Trigger the reader
+                reader.readAsText(error.response.data);
+            } else {
+                // Fallback for standard errors (like network issues)
+                toast.error(error.response?.data?.message || "Failed to download income");
+            }
+            // --- END OF FIX ---
+        }
+    }
+
+    const handleEmailIncomeDetails = async () => {
+        try{
+            const response = await axiosConfig.get(API_ENDPOINTS.EMAIL_INCOME);
+            if (response.status === 200){
+                toast.success("Income details emailed successfully");
+            }
+        }catch(error) {
+            console.error('Error emailing income details:', error);
+            toast.error(error.response?.data?.message || "Failed to email income");
+        }
+    }
+
     useEffect(() => {
         fetchIncomeDetails();
         fetchIncomeCategories();
@@ -131,14 +190,15 @@ const Income = () => {
                 <div className="grid grid-cols-1 gap-6">
                     <div>
                         {/*overview for income with line char */}
-                        <button className="add-btn inline-flex items-center gap-2" onClick={() => setOpenAddIncomeModal(true)}>
-                            <Plus size={15} className="text-lg" /> Add Income
-                        </button>
+                        
+                        <IncomeOverview transactions={incomeData} onAddIncome={() => setOpenAddIncomeModal(true)} />
                     </div>
 
                     <IncomeList 
                         transactions={incomeData} 
                         onDelete={(id) => setOpenDeleteAlert({ show: true, data: id })}
+                        onDownload={handleDownloadIncomeDetails}
+                        onEmail={handleEmailIncomeDetails}
                     />
 
                     {/* Add Income Modal */}
