@@ -8,6 +8,8 @@ import IncomeList from "../components/IncomeList";
 import Modal from "../components/Modal";
 import { Construction, Plus } from "lucide-react";
 import AddIncomeForm from "../components/AddIncomeForm";
+import DeleteAlert from "../components/DeleteAlert";
+// Removed unused axios import
 
 const Income = () => {
     useUser();
@@ -22,7 +24,6 @@ const Income = () => {
     });
 
     //Fetch income details from the API
-
     const fetchIncomeDetails = async () => {
         if (loading) return;
 
@@ -43,44 +44,45 @@ const Income = () => {
 
     //Fetch categories for income
     const fetchIncomeCategories = async () => {
-        try{
+        try {
             const response = await axiosConfig.get(API_ENDPOINTS.CATEGORY_BY_TYPE("income"));
             if (response.status === 200) {
                 console.log('income categories', response.data);
                 setCategories(response.data);
             }
-        }catch(error) {
+        } catch (error) {
             console.log('Failed to fetch income categories:', error);
-            toast.error(error.data?.message || "Failed to fetch income categories");
+            toast.error(error.response?.data?.message || "Failed to fetch income categories"); // Fixed: error.data -> error.response.data
         }
     }
 
     //save the income details
     const handleAddIncome = async (income) => {
-        const {name, amount, date, icon, categoryId} = income;
+        const { name, amount, date, icon, categoryId } = income;
 
         //validation
-        if(!name.trim()) {
+        if (!name.trim()) {
             toast.error("Please enter a name");
+            return; // Added return
         }
 
-        if(!amount || isNaN(amount) || Number(amount) <= 0) {
+        if (!amount || isNaN(amount) || Number(amount) <= 0) {
             toast.error("Amount should be valid number greater than 0");
             return;
         }
 
-        if(!date) {
+        if (!date) {
             toast.error("Please select a date");
             return;
         }
 
         const today = new Date().toISOString().split('T')[0];
-        if(date > today) {
+        if (date > today) {
             toast.error("Date cannot be in the future");
             return;
         }
 
-        if(!categoryId) {
+        if (!categoryId) {
             toast.error("Please select a category");
             return;
         }
@@ -99,9 +101,22 @@ const Income = () => {
                 fetchIncomeDetails();
                 fetchIncomeCategories();
             }
-        }catch (error) {
+        } catch (error) {
             console.log('Error adding income', error);
-            toast.error(error.response?.data?.message || "Failed to adding income");
+            toast.error(error.response?.data?.message || "Failed to add income"); // Fixed: "Failed to adding income" -> "Failed to add income"
+        }
+    }
+
+    //delete income details - Fixed: Added id parameter
+    const deleteIncome = async (id) => {
+        try {
+            await axiosConfig.delete(API_ENDPOINTS.DELETE_INCOME(id));
+            setOpenDeleteAlert({ show: false, data: null });
+            toast.success("Income deleted successfully");
+            fetchIncomeDetails();
+        } catch (error) {
+            console.log('Error deleting income', error);
+            toast.error(error.response?.data?.message || "Failed to delete income");
         }
     }
 
@@ -123,7 +138,7 @@ const Income = () => {
 
                     <IncomeList 
                         transactions={incomeData} 
-                        onDelete={(id) => console.log('deleting the income', id)}
+                        onDelete={(id) => setOpenDeleteAlert({ show: true, data: id })}
                     />
 
                     {/* Add Income Modal */}
@@ -135,6 +150,18 @@ const Income = () => {
                         <AddIncomeForm
                             onAddIncome={(income) => handleAddIncome(income)}
                             categories={categories}
+                        />
+                    </Modal>
+
+                    {/* Delete Income Modal */}
+                    <Modal
+                        isOpen={openDeleteAlert.show}
+                        onClose={() => setOpenDeleteAlert({ show: false, data: null })}
+                        title="Delete Income"
+                    >
+                        <DeleteAlert
+                            content="Are you sure you want to delete this income details?"
+                            onDelete={() => deleteIncome(openDeleteAlert.data)}
                         />
                     </Modal>
                 </div>
