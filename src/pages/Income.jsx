@@ -65,8 +65,7 @@ const Income = () => {
 
     // Save the income details
     const handleAddIncome = async (income) => {
-        console.log('📝 Adding income:', income);
-        const { name, amount, date, icon, categoryId } = income;
+        const {name, amount, date, icon, categoryId} = income;
 
         // Validation
         if (!name.trim()) {
@@ -96,14 +95,6 @@ const Income = () => {
         }
 
         try {
-            console.log('🚀 Sending to API:', {
-                name,
-                amount: Number(amount),
-                date,
-                icon,
-                categoryId,
-            });
-            
             const response = await axiosConfig.post(API_ENDPOINTS.ADD_INCOME, {
                 name,
                 amount: Number(amount),
@@ -111,9 +102,6 @@ const Income = () => {
                 icon,
                 categoryId,
             })
-            
-            console.log('✅ API Response:', response);
-            
             if (response.status === 201) {
                 setOpenAddIncomeModal(false);
                 toast.success("Income added successfully");
@@ -121,9 +109,8 @@ const Income = () => {
                 fetchIncomeCategories();
             }
         } catch (error) {
-            console.log('❌ Error adding income:', error);
-            console.log('❌ Error response:', error.response);
-            toast.error(error.response?.data?.message || "Failed to add income");
+            console.log('Error adding income', error);
+            toast.error(error.response?.data?.message || "Failed to adding income");
         }
     }
 
@@ -142,77 +129,21 @@ const Income = () => {
 
     // Download income details as Excel
     const handleDownloadIncomeDetails = async () => {
-        let loadingToast;
         try {
-            // Show loading toast
-            loadingToast = toast.loading("Downloading income details...");
-            
-            const response = await axiosConfig.get(
-                API_ENDPOINTS.INCOME_EXCEL_DOWNLOAD, 
-                { 
-                    responseType: "blob",
-                    timeout: 30000 // 30 seconds
-                }
-            );
-            
-            // Dismiss loading toast
-            toast.dismiss(loadingToast);
-            
-            // Check if response is actually a blob
-            if (!(response.data instanceof Blob)) {
-                throw new Error("Invalid response format");
-            }
-            
-            // Get filename from Content-Disposition header or use default
-            let filename = "income_details.xlsx";
-            const contentDisposition = response.headers['content-disposition'];
-            if (contentDisposition) {
-                const filenameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
-                if (filenameMatch && filenameMatch[1]) {
-                    filename = filenameMatch[1].replace(/['"]/g, '');
-                }
-            }
-            
-            // Create download link
+            const response = await axiosConfig.get(API_ENDPOINTS.INCOME_EXCEL_DOWNLOAD, {responseType: "blob"});
+            let filename = "incom_details.xlsx";
             const url = window.URL.createObjectURL(new Blob([response.data]));
             const link = document.createElement("a");
             link.href = url;
             link.setAttribute("download", filename);
             document.body.appendChild(link);
             link.click();
-            
-            // Cleanup
             link.parentNode.removeChild(link);
             window.URL.revokeObjectURL(url);
-            
-            toast.success("Income details downloaded successfully");
-
-        } catch (error) {
-            // Dismiss loading toast if it exists
-            if (loadingToast) {
-                toast.dismiss(loadingToast);
-            }
-            
+            toast.success("Download income details successfully");
+        } catch(error) {
             console.error('Error downloading income details:', error);
-
-            // Handle blob error responses
-            if (error.response?.data instanceof Blob) {
-                try {
-                    const text = await error.response.data.text();
-                    const errorData = JSON.parse(text);
-                    toast.error(errorData.message || "Failed to download income details");
-                } catch (parseError) {
-                    toast.error("Failed to download income details");
-                }
-            } else if (error.response?.data?.message) {
-                toast.error(error.response.data.message);
-            } else if (error.code === 'ECONNABORTED') {
-                toast.error("Download timeout - please try again");
-            } else if (!error.response) {
-                toast.error("Network error - please check your connection");
-            } else {
-                toast.error("Failed to download income details");
-            }
+            toast.error(error.response?.data?.message || "Failed to download income");
         }
     }
 

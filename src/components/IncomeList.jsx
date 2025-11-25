@@ -4,47 +4,35 @@ import moment from "moment";
 import { useState } from "react";
 
 const IncomeList = ({ transactions, onDelete, onDownload, onEmail }) => {
-    const [emailLoading, setEmailLoading] = useState(false);
-    const [downloadLoading, setDownloadLoading] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const handleEmail = async () => {
-        setEmailLoading(true);
+        setLoading(true);
         try {
             await onEmail();
-        } catch (error) {
-            console.error('Failed to email:', error);
-            // Consider adding toast notification here
         } finally {
-            setEmailLoading(false);
+            setLoading(false);
         }
-    };
+    }
 
     const handleDownload = async () => {
-        setDownloadLoading(true);
+        setLoading(true);
         try {
             await onDownload();
-        } catch (error) {
-            console.error('Failed to download:', error);
-            // Consider adding toast notification here
         } finally {
-            setDownloadLoading(false);
+            setLoading(false);
         }
-    };
+    }
 
     return (
         <div className="card">
             <div className="flex items-center justify-between">
                 <h5 className="text-lg">Income Sources</h5>
                 <div className="flex items-center justify-end gap-2">
-                    <button 
-                        disabled={emailLoading} 
-                        className="card-btn" 
-                        onClick={handleEmail}
-                        aria-label={emailLoading ? "Emailing transactions" : "Email transactions"}
-                    >
-                        {emailLoading ? (
+                    <button disabled={loading} className="card-btn" onClick={handleEmail}>
+                        {loading ? (
                             <>
-                                <LoaderCircle className="w-4 h-4 animate-spin" />
+                                <LoaderCircle className="w-4 h-4 animate-spin"/>
                                 Emailing...
                             </>
                         ) : (
@@ -54,15 +42,10 @@ const IncomeList = ({ transactions, onDelete, onDownload, onEmail }) => {
                             </>
                         )}
                     </button>
-                    <button 
-                        disabled={downloadLoading} 
-                        className="card-btn" 
-                        onClick={handleDownload}
-                        aria-label={downloadLoading ? "Downloading transactions" : "Download transactions"}
-                    >
-                        {downloadLoading ? (
+                    <button disabled={loading} className="card-btn" onClick={handleDownload}>
+                        {loading ? (
                             <>
-                                <LoaderCircle className="w-4 h-4 animate-spin" />
+                                <LoaderCircle className="w-4 h-4 animate-spin"/>
                                 Downloading...
                             </>
                         ) : (
@@ -76,6 +59,7 @@ const IncomeList = ({ transactions, onDelete, onDownload, onEmail }) => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2">
+                {/* display the incomes */}
                 {transactions?.map((income) => (
                     <TransactionInfoCard
                         key={income.id}
@@ -89,7 +73,7 @@ const IncomeList = ({ transactions, onDelete, onDownload, onEmail }) => {
                 ))}
             </div>
         </div>
-    );
-};
+    )
+}
 
 export default IncomeList;
