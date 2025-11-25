@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { Plus } from "lucide-react"; // or wherever your Plus icon comes from
-import CustomLineChart from "./CustomLineChart"; // adjust path as needed
-import { prepareIncomeLineChartData } from "../utils/chartUtils"; // adjust path as needed
+import { Plus } from "lucide-react";
+import CustomLineChart from "./CustomLineChart.jsx";
+import { prepareIncomeLineChartData } from "../util/chartUtils.js";
 
 const IncomeOverview = ({ transactions, onAddIncome }) => {
     const [chartData, setChartData] = useState([]);
@@ -19,7 +19,7 @@ const IncomeOverview = ({ transactions, onAddIncome }) => {
                     <h5 className="text-lg">
                         Income Overview    
                     </h5>
-                    <p className="text-xs text-gray-400 mt-0.5"> {/* Fixed: removed space */}
+                    <p className="text-xs text-gray-400 mt-0.5">
                         Track your earnings over time and analyze your income trends.
                     </p>
                 </div>
@@ -28,7 +28,7 @@ const IncomeOverview = ({ transactions, onAddIncome }) => {
                 </button>
             </div>
             <div className="mt-10">
-                <CustomLineChart data={chartData} />    
+                <CustomLineChart data={chartData} />
             </div>
         </div>
     )
