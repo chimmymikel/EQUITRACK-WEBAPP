@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { Plus } from "lucide-react";
-import CustomLineChart from "./IncomeLineChart.jsx";
-import { prepareIncomeLineChartData } from "../util/chartUtils.js";
+import CustomLineChart from "./ExpenseLineChart.jsx";
+import { prepareExpenseLineChartData } from "../util/chartUtils.js";
 
-const IncomeOverview = ({ transactions, onAddIncome }) => {
+const ExpenseOverview = ({ transactions, onAddExpense }) => {
     const [chartData, setChartData] = useState([]);
     
     useEffect(() => {
-        const result = prepareIncomeLineChartData(transactions);
+        const result = prepareExpenseLineChartData(transactions);
         console.log(result);
         setChartData(result);
     }, [transactions]);
@@ -17,14 +17,14 @@ const IncomeOverview = ({ transactions, onAddIncome }) => {
             <div className="flex items-center justify-between">
                 <div>
                     <h5 className="text-lg">
-                        Income Overview    
+                        Expense Overview    
                     </h5>
                     <p className="text-xs text-gray-400 mt-0.5">
-                        Track your earnings over time and analyze your income trends.
+                        Track your spending over time and analyze your expense trends.
                     </p>
                 </div>
-                <button className="add-btn inline-flex items-center gap-2" onClick={onAddIncome}>
-                    <Plus size={15} className="text-lg" /> Add Income
+                <button className="add-btn inline-flex items-center gap-2" onClick={onAddExpense}>
+                    <Plus size={15} className="text-lg" /> Add Expense
                 </button>
             </div>
             <div className="mt-10">
@@ -34,4 +34,4 @@ const IncomeOverview = ({ transactions, onAddIncome }) => {
     )
 }
 
-export default IncomeOverview;
+export default ExpenseOverview;
