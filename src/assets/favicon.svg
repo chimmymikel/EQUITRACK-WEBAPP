@@ -1,0 +1,23 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Yellow background rounded square (matching your branding) -->
+  <rect width="64" height="64" rx="12" fill="#FACC15"/>
+  
+  <!-- Lucide Wallet icon (exact paths from lucide-react) -->
+  <g transform="translate(12, 12) scale(1.67)">
+    <!-- Wallet main body -->
+    <path d="M21 12V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5" 
+          stroke="#084062" 
+          stroke-width="2" 
+          stroke-linecap="round" 
+          stroke-linejoin="round" 
+          fill="none"/>
+    
+    <!-- Card compartment -->
+    <path d="M21 12h-5a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h5" 
+          stroke="#084062" 
+          stroke-width="2" 
+          stroke-linecap="round" 
+          stroke-linejoin="round" 
+          fill="none"/>
+  </g>
+</svg>
