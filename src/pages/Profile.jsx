@@ -7,10 +7,13 @@ import { API_ENDPOINTS } from "../util/apiEndpoints";
 import uploadProfileImage from "../util/uploadProfileImage";
 import toast from "react-hot-toast";
 import ProfilePhotoSelector from "../components/ProfilePhotoSelector";
+import { useNavigate } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
 
 const Profile = () => {
     useUser(); // ensures user is loaded or redirected
     const { user, setUser } = useContext(AppContext);
+    const navigate = useNavigate();
 
     // State for dashboard statistics
     const [stats, setStats] = useState({
@@ -251,6 +254,14 @@ const Profile = () => {
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 md:p-8">
             <div className="max-w-6xl mx-auto space-y-6">
+
+                <button
+                    onClick={() => navigate('/dashboard')}
+                    className="flex items-center gap-2 text-gray-600 hover:text-purple-600 transition-colors font-medium group"
+                >
+                    <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+                    Back to Dashboard
+                </button>
                 
                 {/* Header Section */}
                 <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">

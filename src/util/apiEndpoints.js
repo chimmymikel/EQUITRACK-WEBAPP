@@ -15,6 +15,7 @@ export const API_ENDPOINTS = {
     ADD_INCOME: "/incomes/all",
     ADD_EXPENSE: "expenses/all",
     DELETE_INCOME: (incomeId) => `/incomes/${incomeId}`,
+    DELETE_EXPENSE: (expenseId) => `/expenses/${expenseId}`,
     INCOME_EXCEL_DOWNLOAD: "/excel/download/income",
     EMAIL_INCOME: "/email/income-excel",
     EXPENSE_EXCEL_DOWNLOAD: "/excel/download/expense", 
