@@ -1,7 +1,5 @@
 import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { assets } from "../assets/assets.js";
-import Input from "../components/Input.jsx";
 import axiosConfig from "../util/axiosConfig.js";
 import { AppContext } from "../context/AppContext.jsx";
 import toast from "react-hot-toast";
@@ -9,7 +7,6 @@ import { LoaderCircle, Eye, EyeOff, Wallet, Shield, Zap } from "lucide-react";
 import { validateEmail } from "../util/validation.js";
 
 const Login = () => {
-  const [fullname, setFullname] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -36,19 +33,12 @@ const Login = () => {
       return;
     }
     
-    setError("");
-    
     try {
       const response = await axiosConfig.post("/login", {
-        fullname,
         email,
         password,
       });
 
-      //console.log("🔍 Full API Response:", response.data);
-      //console.log("👤 User object:", response.data.user);
-      //console.log("📝 User fullname:", response.data.user?.fullName);
-      
       const { token, user } = response.data;
       if (token) {
         localStorage.setItem("token", token);
@@ -75,22 +65,22 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen w-full relative flex items-center justify-center overflow-hidden bg-gradient-to-br from-slate-900 via-[#084062] to-blue-900 p-4">
+    <div className="min-h-screen w-full relative flex items-center justify-center bg-gradient-to-br from-slate-900 via-[#084062] to-blue-900 px-4 py-8 lg:py-0 pt-12 overflow-x-hidden">
       
       {/* Animated Background Elements */}
-      <div className="absolute inset-0 overflow-hidden">
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-yellow-400 rounded-full blur-3xl opacity-20 animate-pulse"></div>
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-400 rounded-full blur-3xl opacity-20 animate-pulse" style={{ animationDelay: '2s' }}></div>
         <div className="absolute top-3/4 left-1/3 w-48 h-48 bg-cyan-400 rounded-full blur-3xl opacity-15 animate-pulse" style={{ animationDelay: '4s' }}></div>
       </div>
 
       {/* Main Content Container */}
-      <div className="relative z-10 w-full max-w-6xl flex flex-col lg:flex-row items-center justify-between gap-12">
+      <div className="relative z-10 w-full max-w-7xl flex flex-col lg:flex-row items-center justify-between gap-10 lg:gap-20">
         
         {/* Left Side - Branding & Features */}
-        <div className="flex-1 max-w-lg text-white space-y-8">
-          <div className="space-y-6">
-            <Link to="/" className="flex items-center gap-3 group mb-8">
+        <div className="flex-1 w-full text-white space-y-8 text-center lg:text-left">
+          <div className="space-y-4">
+            <Link to="/" className="inline-flex items-center gap-3 group mx-auto lg:mx-0">
               <div className="w-12 h-12 bg-yellow-400 rounded-xl flex items-center justify-center transform group-hover:scale-110 group-hover:rotate-12 transition-all duration-300">
                 <Wallet className="w-7 h-7 text-blue-900" />
               </div>
@@ -99,43 +89,43 @@ const Login = () => {
               </span>
             </Link>
 
-            <h1 className="text-5xl lg:text-6xl font-black leading-tight">
+            <h1 className="text-5xl lg:text-6xl xl:text-7xl font-black leading-tight">
               Welcome
               <span className="block text-yellow-400">Back!</span>
             </h1>
             
-            <p className="text-xl text-gray-200 leading-relaxed">
+            <p className="text-lg text-gray-200 leading-relaxed max-w-xl mx-auto lg:mx-0">
               Continue your journey to financial freedom. Track, manage, and optimize your finances with EquiTrack.
             </p>
           </div>
 
           {/* Features List */}
-          <div className="space-y-6">
+          <div className="hidden sm:block space-y-5 max-w-lg mx-auto lg:mx-0">
             <div className="flex items-center gap-4 group hover:transform hover:-translate-y-1 transition-all duration-300">
-              <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center group-hover:bg-yellow-400 group-hover:text-gray-900 transition-all duration-300">
+              <div className="w-12 h-12 bg-white/10 rounded-xl flex shrink-0 items-center justify-center group-hover:bg-yellow-400 group-hover:text-gray-900 transition-all duration-300">
                 <Shield className="w-6 h-6" />
               </div>
-              <div>
+              <div className="text-left">
                 <h3 className="font-bold text-lg">Secure & Protected</h3>
                 <p className="text-gray-300">Your financial data is safe and encrypted</p>
               </div>
             </div>
 
             <div className="flex items-center gap-4 group hover:transform hover:-translate-y-1 transition-all duration-300">
-              <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center group-hover:bg-yellow-400 group-hover:text-gray-900 transition-all duration-300">
+              <div className="w-12 h-12 bg-white/10 rounded-xl flex shrink-0 items-center justify-center group-hover:bg-yellow-400 group-hover:text-gray-900 transition-all duration-300">
                 <Zap className="w-6 h-6" />
               </div>
-              <div>
+              <div className="text-left">
                 <h3 className="font-bold text-lg">Real-time Updates</h3>
                 <p className="text-gray-300">See your income and expenses instantly</p>
               </div>
             </div>
 
             <div className="flex items-center gap-4 group hover:transform hover:-translate-y-1 transition-all duration-300">
-              <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center group-hover:bg-yellow-400 group-hover:text-gray-900 transition-all duration-300">
+              <div className="w-12 h-12 bg-white/10 rounded-xl flex shrink-0 items-center justify-center group-hover:bg-yellow-400 group-hover:text-gray-900 transition-all duration-300">
                 <Wallet className="w-6 h-6" />
               </div>
-              <div>
+              <div className="text-left">
                 <h3 className="font-bold text-lg">Smart Budgeting</h3>
                 <p className="text-gray-300">Set spending limits and track your categories</p>
               </div>
@@ -144,11 +134,10 @@ const Login = () => {
         </div>
 
         {/* Right Side - Login Form */}
-        <div className="flex-1 max-w-md">
-          <div className="bg-white/10 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/20 p-8 lg:p-10">
+        <div className="flex-1 w-full max-w-lg">
+          <div className="bg-white/10 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/20 p-8">
             
-            {/* Form Header */}
-            <div className="text-center mb-8">
+            <div className="text-center mb-6">
               <h2 className="text-3xl font-black text-white mb-2">
                 Sign In to <span className="text-yellow-400">EquiTrack</span>
               </h2>
@@ -157,10 +146,9 @@ const Login = () => {
               </p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-5">
               
-              {/* Email Input */}
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 <label className="text-white font-medium text-sm">Email Address</label>
                 <div className="relative">
                   <input
@@ -168,14 +156,13 @@ const Login = () => {
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="your.email@example.com"
                     type="email"
-                    className="w-full px-4 py-4 bg-white/5 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 transition-all duration-300"
+                    className="w-full px-4 py-3.5 bg-white/5 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 transition-all duration-300"
                     disabled={isLoading}
                   />
                 </div>
               </div>
 
-              {/* Password Input */}
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 <label className="text-white font-medium text-sm">Password</label>
                 <div className="relative">
                   <input
@@ -183,7 +170,7 @@ const Login = () => {
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Enter your password"
                     type={showPassword ? "text" : "password"}
-                    className="w-full px-4 py-4 bg-white/5 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 transition-all duration-300 pr-12"
+                    className="w-full px-4 py-3.5 bg-white/5 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 transition-all duration-300 pr-12"
                     disabled={isLoading}
                   />
                   <button
@@ -196,7 +183,6 @@ const Login = () => {
                 </div>
               </div>
 
-              {/* Forgot Password Link */}
               <div className="text-right">
                 <button
                   type="button"
@@ -206,7 +192,6 @@ const Login = () => {
                 </button>
               </div>
 
-              {/* Error Message */}
               {error && (
                 <div className="p-4 bg-red-500/20 border border-red-400/50 rounded-xl">
                   <p className="text-red-200 text-sm text-center">
@@ -215,10 +200,9 @@ const Login = () => {
                 </div>
               )}
 
-              {/* Login Button */}
               <button
                 disabled={isLoading}
-                className="w-full bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-2xl hover:shadow-yellow-400/30 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:shadow-none group"
+                className="w-full bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold py-3.5 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-2xl hover:shadow-yellow-400/30 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:shadow-none group"
                 type="submit"
               >
                 <span className="flex items-center justify-center gap-3">
@@ -236,8 +220,7 @@ const Login = () => {
                 </span>
               </button>
 
-              {/* Sign Up Link */}
-              <div className="text-center pt-6">
+              <div className="text-center pt-4">
                 <p className="text-gray-300">
                   Don't have an account?{' '}
                   <Link 
@@ -250,12 +233,11 @@ const Login = () => {
               </div>
             </form>
 
-            {/* Security Notice */}
-            <div className="mt-8 p-4 bg-white/5 rounded-xl border border-white/10">
+            <div className="mt-6 p-4 bg-white/5 rounded-xl border border-white/10">
               <div className="flex items-center gap-3">
-                <Shield className="w-5 h-5 text-yellow-400" />
+                <Shield className="w-5 h-5 text-yellow-400 shrink-0" />
                 <p className="text-gray-300 text-sm">
-                  Your money is safer  with a clear mindset
+                  Your money is safer with a clear mindset
                 </p>
               </div>
             </div>

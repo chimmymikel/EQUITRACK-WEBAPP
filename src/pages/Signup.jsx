@@ -1,14 +1,25 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { assets } from "../assets/assets.js";
-import Input from "../components/Input.jsx";
-import { validateEmail } from "../util/validation.js";
 import axiosConfig from "../util/axiosConfig.js";
 import { API_ENDPOINTS } from "../util/apiEndpoints.js";
 import toast from "react-hot-toast";
 import { LoaderCircle, Eye, EyeOff, Wallet, Shield, TrendingUp, CheckCircle, Zap, User, Camera } from "lucide-react";
-import ProfilePhotoSelector from "../components/ProfilePhotoSelector.jsx";
 import uploadProfileImage from "../util/uploadProfileImage.js";
+
+// --- ANIMATION STYLE ---
+const PageAnimation = () => (
+  <style>{`
+    @keyframes popIn {
+      0% { opacity: 0; transform: scale(0.95) translateY(20px); }
+      100% { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .animate-pop-in {
+      opacity: 0;
+      animation: popIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      animation-delay: 0.1s;
+    }
+  `}</style>
+);
 
 const Signup = () => {
     const [fullname, setFullname] = useState("");
@@ -55,7 +66,7 @@ const Signup = () => {
         return "Very Weak";
     };
 
-    // Simple profile photo selector component
+    // Component: Profile Photo Selector
     const SimpleProfilePhotoSelector = ({ image, setImage, size = "lg" }) => {
         const handleImageUpload = (e) => {
             const file = e.target.files[0];
@@ -68,10 +79,10 @@ const Signup = () => {
             }
         };
 
-        const sizeClass = size === "lg" ? "w-20 h-20 md:w-24 md:h-24" : "w-16 h-16";
+        const sizeClass = size === "lg" ? "w-16 h-16 md:w-20 md:h-20" : "w-14 h-14";
 
         return (
-            <div className="flex flex-col items-center space-y-2">
+            <div className="flex flex-col items-center space-y-1">
                 <div className="relative group">
                     <div className={`${sizeClass} rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center relative overflow-hidden border-3 border-white/20 group-hover:border-yellow-400 transition-all duration-300`}>
                         {image ? (
@@ -84,13 +95,11 @@ const Signup = () => {
                             <User className="w-8 h-8 md:w-10 md:h-10 text-white" />
                         )}
                         
-                        {/* Camera overlay */}
                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                             <Camera className="w-5 h-5 text-white" />
                         </div>
                     </div>
                     
-                    {/* Floating upload button */}
                     <label className="absolute -bottom-1 -right-1 bg-yellow-400 text-gray-900 p-1.5 rounded-full cursor-pointer hover:bg-yellow-500 transition-all duration-300 transform hover:scale-110 shadow-lg">
                         <Camera className="w-3 h-3" />
                         <input
@@ -170,83 +179,105 @@ const Signup = () => {
     }
 
     return (
-        <div className="min-h-screen w-full relative flex items-center justify-center overflow-y-auto bg-gradient-to-br from-slate-900 via-[#084062] to-blue-900 p-4">
+        <div className="min-h-screen w-full relative flex items-center justify-center bg-gradient-to-br from-slate-900 via-[#084062] to-blue-900 px-4 py-6 lg:py-0 overflow-x-hidden">
             
+            {/* Inject Animation Styles */}
+            <PageAnimation />
+
             {/* Animated Background Elements */}
-            <div className="fixed inset-0 overflow-hidden pointer-events-none">
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
                 <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-yellow-400 rounded-full blur-3xl opacity-20 animate-pulse"></div>
                 <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-400 rounded-full blur-3xl opacity-20 animate-pulse" style={{ animationDelay: '2s' }}></div>
                 <div className="absolute top-3/4 left-1/3 w-48 h-48 bg-cyan-400 rounded-full blur-3xl opacity-15 animate-pulse" style={{ animationDelay: '4s' }}></div>
             </div>
 
-            {/* Main Content Container */}
-            <div className="relative z-10 w-full max-w-6xl flex flex-col lg:flex-row items-center justify-center gap-6 lg:gap-8 py-8">
+            {/* Main Content Container - ADDED 'animate-pop-in' HERE */}
+            <div className="relative z-10 w-full max-w-7xl flex flex-col lg:flex-row items-center justify-between gap-10 lg:gap-20 animate-pop-in">
                 
-                {/* Left Side - Branding & Benefits */}
-                <div className="w-full lg:flex-1 max-w-lg text-white space-y-6 lg:space-y-8">
-                    <div className="space-y-4 lg:space-y-6">
-                        <Link to="/" className="flex items-center gap-3 group">
-                            <div className="w-10 h-10 lg:w-12 lg:h-12 bg-yellow-400 rounded-xl flex items-center justify-center transform group-hover:scale-110 group-hover:rotate-12 transition-all duration-300 shadow-xl shadow-yellow-400/30">
-                                <Wallet className="w-5 h-5 lg:w-6 lg:h-6 text-blue-900" />
+                {/* Left Side - Branding & Features */}
+                <div className="hidden lg:flex flex-1 w-full flex-col justify-center text-white space-y-8 text-left">
+                    
+                    {/* Header Group */}
+                    <div className="space-y-6">
+                        <Link to="/" className="inline-flex items-center gap-3 group">
+                            <div className="w-12 h-12 bg-yellow-400 rounded-xl flex items-center justify-center transform group-hover:scale-110 group-hover:rotate-12 transition-all duration-300 shadow-xl shadow-yellow-400/30">
+                                <Wallet className="w-7 h-7 text-blue-900" />
                             </div>
-                            <span className="text-2xl lg:text-3xl font-black tracking-tight">
+                            <span className="text-3xl font-black tracking-tight">
                                 Equi<span className="text-yellow-400">Track</span>
                             </span>
                         </Link>
 
-                        <div className="space-y-3 lg:space-y-4">
-                            <h1 className="text-3xl lg:text-4xl font-black leading-tight">
+                        <div className="space-y-3">
+                            <h1 className="text-5xl lg:text-6xl font-black leading-tight">
                                 Start Your
-                                <span className="block text-yellow-400 mt-1 lg:mt-2">Financial Journey</span>
+                                <span className="block text-yellow-400 mt-1">Financial Journey</span>
                             </h1>
                             
-                            <p className="text-base lg:text-lg text-gray-200 leading-relaxed">
-                                Join EquiTrack and take the first step towards financial clarity and control. 
-                                It's free, simple, and designed for students and young professionals.
+                            <p className="text-lg text-gray-200 leading-relaxed max-w-lg">
+                                Join EquiTrack and take the first step towards financial clarity. It's free, simple, and designed for you.
                             </p>
                         </div>
                     </div>
 
-                    {/* Benefits List */}
-                    <div className="space-y-3 lg:space-y-4">
-                        <div className="flex items-start gap-3 text-gray-200 text-sm lg:text-base">
-                            <CheckCircle className="w-4 h-4 lg:w-5 lg:h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
-                            <span className="leading-relaxed">Track expenses and income in real-time</span>
+                    {/* Features List - Vertically Aligned */}
+                    <div className="space-y-4 max-w-lg">
+                        <div className="flex items-center gap-4 group">
+                            <div className="w-10 h-10 bg-white/10 rounded-lg flex shrink-0 items-center justify-center text-yellow-400 group-hover:bg-yellow-400 group-hover:text-blue-900 transition-all duration-300">
+                                <TrendingUp className="w-5 h-5" />
+                            </div>
+                            <span className="text-gray-200 text-sm font-medium">Track expenses and income in real-time</span>
                         </div>
-                        <div className="flex items-start gap-3 text-gray-200 text-sm lg:text-base">
-                            <CheckCircle className="w-4 h-4 lg:w-5 lg:h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
-                            <span className="leading-relaxed">Smart budgeting tools and insights</span>
+
+                        <div className="flex items-center gap-4 group">
+                            <div className="w-10 h-10 bg-white/10 rounded-lg flex shrink-0 items-center justify-center text-yellow-400 group-hover:bg-yellow-400 group-hover:text-blue-900 transition-all duration-300">
+                                <Wallet className="w-5 h-5" />
+                            </div>
+                            <span className="text-gray-200 text-sm font-medium">Smart budgeting tools and insights</span>
                         </div>
-                        <div className="flex items-start gap-3 text-gray-200 text-sm lg:text-base">
-                            <CheckCircle className="w-4 h-4 lg:w-5 lg:h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
-                            <span className="leading-relaxed">Secure and private data protection</span>
+
+                        <div className="flex items-center gap-4 group">
+                            <div className="w-10 h-10 bg-white/10 rounded-lg flex shrink-0 items-center justify-center text-yellow-400 group-hover:bg-yellow-400 group-hover:text-blue-900 transition-all duration-300">
+                                <Shield className="w-5 h-5" />
+                            </div>
+                            <span className="text-gray-200 text-sm font-medium">Secure and private data protection</span>
                         </div>
-                        <div className="flex items-start gap-3 text-gray-200 text-sm lg:text-base">
-                            <CheckCircle className="w-4 h-4 lg:w-5 lg:h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
-                            <span className="leading-relaxed">Customizable financial categories</span>
+
+                        <div className="flex items-center gap-4 group">
+                            <div className="w-10 h-10 bg-white/10 rounded-lg flex shrink-0 items-center justify-center text-yellow-400 group-hover:bg-yellow-400 group-hover:text-blue-900 transition-all duration-300">
+                                <CheckCircle className="w-5 h-5" />
+                            </div>
+                            <span className="text-gray-200 text-sm font-medium">Customizable financial categories</span>
                         </div>
                     </div>
 
-                    {/* Trust Indicators */}
-                    <div className="pt-3 lg:pt-4 space-y-2 lg:space-y-3 border-t border-white/10">
-                        <div className="flex items-center gap-3 text-gray-300 text-xs lg:text-sm">
-                            <Shield className="w-3 h-3 lg:w-4 lg:h-4 text-yellow-400 flex-shrink-0" />
+                    {/* Footer */}
+                    <div className="pt-4 border-t border-white/10 max-w-lg">
+                        <div className="flex items-center gap-3 text-gray-400 text-xs">
+                            <User className="w-4 h-4 text-yellow-400" />
                             <span>Built by CIT-U students for the community</span>
-                        </div>
-                        <div className="flex items-center gap-3 text-gray-300 text-xs lg:text-sm">
-                            <TrendingUp className="w-3 h-3 lg:w-4 lg:h-4 text-yellow-400 flex-shrink-0" />
-                            <span>Completely free to use</span>
                         </div>
                     </div>
                 </div>
 
-                {/* Right Side - Signup Form */}
-                <div className="w-full lg:flex-1 max-w-md">
-                    <div className="bg-white/10 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 p-5 lg:p-6">
+                {/* --- RIGHT SIDE: FORM CARD --- */}
+                <div className="flex-1 w-full max-w-lg">
+                    {/* Compact padding (p-6) ensures it doesn't overflow height */}
+                    <div className="bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl border border-white/20 p-6 lg:p-8">
                         
+                        {/* Mobile Header (Only visible on mobile) */}
+                        <div className="text-center mb-4 lg:hidden">
+                             <Link to="/" className="inline-flex items-center gap-2 group mb-2">
+                                <div className="w-8 h-8 bg-yellow-400 rounded-lg flex items-center justify-center">
+                                    <Wallet className="w-5 h-5 text-blue-900" />
+                                </div>
+                                <span className="text-2xl font-black text-white">Equi<span className="text-yellow-400">Track</span></span>
+                            </Link>
+                        </div>
+
                         {/* Form Header */}
                         <div className="text-center mb-4">
-                            <h2 className="text-xl font-black text-white mb-1">
+                            <h2 className="text-2xl font-black text-white mb-1">
                                 Join <span className="text-yellow-400">EquiTrack</span>
                             </h2>
                             <p className="text-gray-200 text-xs">
@@ -257,7 +288,7 @@ const Signup = () => {
                         <form onSubmit={handleSubmit} className="space-y-3">
                             
                             {/* Profile Photo */}
-                            <div className="flex justify-center mb-3">
+                            <div className="flex justify-center -mt-2">
                                 <SimpleProfilePhotoSelector 
                                     image={profilePhoto} 
                                     setImage={setProfilePhoto}
@@ -267,46 +298,46 @@ const Signup = () => {
 
                             {/* Full Name Input */}
                             <div className="space-y-1">
-                                <label className="text-white font-medium text-xs">Full Name</label>
+                                <label className="text-white font-medium text-xs ml-1">Full Name</label>
                                 <input
                                     value={fullname}
                                     onChange={(e) => setFullname(e.target.value)}
                                     placeholder="Enter your full name"
                                     type="text"
-                                    className="w-full px-3 py-2.5 bg-white/5 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-yellow-400 focus:border-yellow-400 transition-all duration-300 text-sm"
+                                    className="w-full px-4 py-2.5 bg-white/5 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-yellow-400 focus:border-yellow-400 transition-all duration-300 text-sm"
                                     disabled={isLoading}
                                 />
                             </div>
 
                             {/* Email Input */}
                             <div className="space-y-1">
-                                <label className="text-white font-medium text-xs">Email Address</label>
+                                <label className="text-white font-medium text-xs ml-1">Email Address</label>
                                 <input
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     placeholder="your.email@example.com"
                                     type="email"
-                                    className="w-full px-3 py-2.5 bg-white/5 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-yellow-400 focus:border-yellow-400 transition-all duration-300 text-sm"
+                                    className="w-full px-4 py-2.5 bg-white/5 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-yellow-400 focus:border-yellow-400 transition-all duration-300 text-sm"
                                     disabled={isLoading}
                                 />
                             </div>
 
                             {/* Password Input */}
-                            <div className="space-y-2">
-                                <label className="text-white font-medium text-xs">Password</label>
+                            <div className="space-y-1">
+                                <label className="text-white font-medium text-xs ml-1">Password</label>
                                 <div className="relative">
                                     <input
                                         value={password}
                                         onChange={handlePasswordChange}
                                         placeholder="Create a strong password"
                                         type={showPassword ? "text" : "password"}
-                                        className="w-full px-3 py-2.5 bg-white/5 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-yellow-400 focus:border-yellow-400 transition-all duration-300 pr-10 text-sm"
+                                        className="w-full px-4 py-2.5 bg-white/5 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-yellow-400 focus:border-yellow-400 transition-all duration-300 pr-10 text-sm"
                                         disabled={isLoading}
                                     />
                                     <button
                                         type="button"
                                         onClick={togglePasswordVisibility}
-                                        className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-yellow-400 transition-colors duration-300"
+                                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-yellow-400 transition-colors duration-300"
                                     >
                                         {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                                     </button>
@@ -314,10 +345,10 @@ const Signup = () => {
                                 
                                 {/* Password Strength Meter */}
                                 {password && (
-                                    <div className="space-y-1">
-                                        <div className="flex justify-between text-xs">
-                                            <span className="text-gray-300">Password strength:</span>
-                                            <span className={`font-medium ${
+                                    <div className="space-y-1 mt-1">
+                                        <div className="flex justify-between text-[10px]">
+                                            <span className="text-gray-300">Strength:</span>
+                                            <span className={`font-bold ${
                                                 passwordStrength >= 75 ? "text-green-400" :
                                                 passwordStrength >= 50 ? "text-yellow-400" :
                                                 passwordStrength >= 25 ? "text-orange-400" : "text-red-400"
@@ -325,9 +356,9 @@ const Signup = () => {
                                                 {getPasswordStrengthText()}
                                             </span>
                                         </div>
-                                        <div className="w-full bg-white/10 rounded-full h-1.5">
+                                        <div className="w-full bg-white/10 rounded-full h-1">
                                             <div 
-                                                className={`h-1.5 rounded-full transition-all duration-500 ${getPasswordStrengthColor()}`}
+                                                className={`h-1 rounded-full transition-all duration-500 ${getPasswordStrengthColor()}`}
                                                 style={{ width: `${passwordStrength}%` }}
                                             ></div>
                                         </div>
@@ -347,7 +378,7 @@ const Signup = () => {
                             {/* Sign Up Button */}
                             <button
                                 disabled={isLoading}
-                                className="w-full bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold py-2.5 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-yellow-400/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:shadow-none group text-sm"
+                                className="w-full bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold py-3 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-yellow-400/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:shadow-none group text-sm mt-1"
                                 type="submit"
                             >
                                 <span className="flex items-center justify-center gap-2">
@@ -380,14 +411,15 @@ const Signup = () => {
                         </form>
 
                         {/* Security Notice */}
-                        <div className="mt-4 p-2 bg-white/5 rounded-lg border border-white/10">
-                            <div className="flex items-center gap-2">
-                                <Shield className="w-3 h-3 text-yellow-400" />
-                                <p className="text-gray-300 text-xs">
+                        <div className="mt-4 p-2 bg-white/5 rounded-lg border border-white/10 text-center">
+                            <div className="flex items-center gap-2 justify-center">
+                                <Shield className="w-3 h-3 text-yellow-400 shrink-0" />
+                                <p className="text-gray-400 text-[10px] leading-tight text-left">
                                     Your data is secure. We never share your personal information.
                                 </p>
                             </div>
                         </div>
+                        
                     </div>
                 </div>
             </div>

@@ -176,7 +176,7 @@ const LandingPage = () => {
               </span>
               <span className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-purple-400 rounded-full shadow-lg shadow-purple-400/50"></div>
-                Trusted by thousands
+                Made with Genuine Love
               </span>
             </div>
           </AnimatedSection>

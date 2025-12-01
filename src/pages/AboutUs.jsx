@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Mail, Phone, MapPin, Wallet } from 'lucide-react';
+import { Mail, Phone, MapPin, Wallet, ArrowUp } from 'lucide-react'; // Added ArrowUp
 import { Link } from 'react-router-dom';
 
 // --- SVG Icons ---
@@ -115,7 +115,7 @@ const useScrollAnimation = () => {
   return [ref, isVisible];
 };
 
-// --- Enhanced Scroll Indicator Component ---
+// --- FIXED SCROLL INDICATOR ---
 const EnhancedScrollIndicator = () => {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
@@ -128,8 +128,7 @@ const EnhancedScrollIndicator = () => {
       
       setScrollProgress(progress);
       
-      // Hide main indicator after user starts scrolling
-      if (scrollTop > 100) {
+      if (scrollTop > 50) {
         setIsVisible(false);
       } else {
         setIsVisible(true);
@@ -142,7 +141,6 @@ const EnhancedScrollIndicator = () => {
 
   return (
     <>
-      {/* Progress Bar at top */}
       <div className="fixed top-0 left-0 w-full h-1 bg-slate-700/50 z-50">
         <div 
           className="h-full bg-yellow-400 transition-all duration-300 ease-out"
@@ -150,24 +148,20 @@ const EnhancedScrollIndicator = () => {
         ></div>
       </div>
 
-      {/* Animated Scroll Indicator - Only show when at top */}
-      {isVisible && (
-        <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-40">
-          <div className="flex flex-col items-center gap-3 animate-bounce">
-            <span className="text-white text-sm font-medium bg-black/50 backdrop-blur-sm px-4 py-2 rounded-full border border-yellow-400/30 shadow-lg">
-              Scroll to explore more
-            </span>
-            <div className="w-8 h-12 border-2 border-yellow-400 rounded-full flex justify-center relative shadow-lg">
-              <div className="w-1.5 h-4 bg-yellow-400 rounded-full mt-2 animate-pulse"></div>
-            </div>
+      <div 
+        className={`fixed bottom-4 left-1/2 transform -translate-x-1/2 z-40 transition-opacity duration-300 pointer-events-none ${isVisible ? 'opacity-100' : 'opacity-0'}`}
+      >
+        <div className="flex flex-col items-center animate-bounce">
+          <div className="w-6 h-10 border-2 border-yellow-400/70 rounded-full flex justify-center relative shadow-lg bg-black/20 backdrop-blur-sm">
+            <div className="w-1 h-2 bg-yellow-400 rounded-full mt-2 animate-pulse"></div>
           </div>
         </div>
-      )}
+      </div>
     </>
   );
 };
 
-// --- Header Component (CUSTOM #084062 THEME) ---
+// --- Header Component ---
 const Header = () => {
   const [scrolled, setScrolled] = useState(false);
 
@@ -313,6 +307,25 @@ const Modal = ({ content, onClose }) => {
 // --- Main About Us Page ---
 const AboutUs = () => {
   const [modalContent, setModalContent] = useState(null);
+  const [showScrollTop, setShowScrollTop] = useState(false); // State for scroll button
+
+  // Check scroll position to show/hide "Up" button
+  useEffect(() => {
+    const checkScroll = () => {
+      if (window.scrollY > 300) {
+        setShowScrollTop(true);
+      } else {
+        setShowScrollTop(false);
+      }
+    };
+    window.addEventListener('scroll', checkScroll);
+    return () => window.removeEventListener('scroll', checkScroll);
+  }, []);
+
+  // Scroll to top function
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const resourcesContent = {
     help: {
@@ -388,12 +401,12 @@ const AboutUs = () => {
       <EnhancedScrollIndicator />
 
       <main>
-        {/* Hero Section - Deep Navy Blue */}
+        {/* Hero Section - UPDATED GRADIENT (Lighter) */}
         <section 
-          className="relative min-h-screen flex items-center justify-center overflow-hidden pt-32 pb-16 bg-gradient-to-br from-slate-900 via-[#084062] to-blue-900"
+          className="relative min-h-screen flex items-center justify-center overflow-hidden pt-32 pb-16 bg-gradient-to-br from-slate-800 via-[#084062] to-blue-800"
         >
-          {/* Visual Cue Gradient at Bottom */}
-          <div className="absolute bottom-0 left-0 w-full h-40 bg-gradient-to-t from-slate-900 via-slate-900/70 to-transparent pointer-events-none z-20"></div>
+          {/* Visual Cue Gradient at Bottom - REDUCED OPACITY */}
+          <div className="absolute bottom-0 left-0 w-full h-40 bg-gradient-to-t from-slate-900/40 to-transparent pointer-events-none z-20"></div>
           
           <div className="absolute inset-0 opacity-10">
             <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-yellow-400 rounded-full blur-3xl"></div>
@@ -430,7 +443,7 @@ const AboutUs = () => {
                       <h2 className="text-4xl md:text-5xl font-black text-white mb-6">
                         Welcome to <span className="text-yellow-400">EquiTrack</span>
                       </h2>
-                      <p className="text-lg text-gray-200 leading-relaxed">
+                      <p className="text-lg text-white font-medium leading-relaxed drop-shadow-md">
                         At EquiTrack, we believe that financial literacy is the foundation for independence and success. We are committed to making money management simple, clear, and empowering for everyone.
                       </p>
                     </div>
@@ -442,7 +455,7 @@ const AboutUs = () => {
                         <span className="text-white">Our </span>
                         <span className="text-yellow-400">Mission</span>
                       </h3>
-                      <p className="text-lg text-gray-200 leading-relaxed">
+                      <p className="text-lg text-white font-medium leading-relaxed drop-shadow-md">
                         Our mission is to provide a platform that not only helps people take control of their finances but also encourages them to develop healthy, sustainable money habits.
                       </p>
                     </div>
@@ -454,7 +467,7 @@ const AboutUs = () => {
                         <span className="text-white">Our </span>
                         <span className="text-yellow-400">Vision</span>
                       </h3>
-                      <p className="text-lg text-gray-200 leading-relaxed">
+                      <p className="text-lg text-white font-medium leading-relaxed drop-shadow-md">
                         We envision a future where managing money is no longer stressful or confusing—where students, young professionals, and individuals alike feel confident in making smart financial decisions.
                       </p>
                     </div>
@@ -465,7 +478,7 @@ const AboutUs = () => {
           </div>
         </section>
 
-        {/* Why EquiTrack? Section - Medium Blue Contrast */}
+        {/* Why EquiTrack? Section */}
         <section 
           className="relative py-20 sm:py-24 bg-gradient-to-br from-slate-800 via-blue-800 to-slate-900"
         >
@@ -499,7 +512,8 @@ const AboutUs = () => {
                         </div>
                         <div>
                           <h3 className="text-2xl font-bold text-white mb-3">{point.title}</h3>
-                          <p className="text-gray-300 leading-relaxed text-lg">{point.desc}</p>
+                          {/* Changed to text-white */}
+                          <p className="text-white font-medium leading-relaxed text-lg">{point.desc}</p>
                         </div>
                       </div>
                     </AnimatedSection>
@@ -510,7 +524,7 @@ const AboutUs = () => {
           </div>
         </section>
 
-        {/* Team Section - Deep Blue */}
+        {/* Team Section */}
         <section 
           className="relative py-20 sm:py-24 bg-gradient-to-br from-slate-900 via-[#084062] to-blue-900"
         >
@@ -532,7 +546,8 @@ const AboutUs = () => {
                     The Magic
                   </span>
                 </h2>
-                <p className="text-xl text-gray-200 max-w-3xl mx-auto">
+                {/* Changed to text-white */}
+                <p className="text-xl text-white font-medium max-w-3xl mx-auto">
                   Passionate CIT-U developers turning caffeine into code and ideas into reality.
                 </p>
               </div>
@@ -545,7 +560,7 @@ const AboutUs = () => {
           </div>
         </section>
 
-        {/* CORE VALUES SECTION - Medium Blue Contrast */}
+        {/* CORE VALUES SECTION */}
         <section 
           className="relative py-20 sm:py-24 bg-gradient-to-br from-slate-800 via-blue-800 to-slate-900"
         >
@@ -558,7 +573,8 @@ const AboutUs = () => {
             <AnimatedSection>
               <div className="text-center mb-20">
                 <h2 className="text-5xl font-black text-white mb-6">Our Core Values</h2>
-                <p className="text-xl text-gray-300">Principles that guide every decision we make</p>
+                {/* Changed to text-white */}
+                <p className="text-xl text-white font-medium">Principles that guide every decision we make</p>
               </div>
             </AnimatedSection>
             
@@ -575,7 +591,8 @@ const AboutUs = () => {
                       </div>
                       <div>
                         <h3 className="text-2xl font-bold text-white mb-3">{value.title}</h3>
-                        <p className="text-gray-300 leading-relaxed text-lg">{value.desc}</p>
+                        {/* Changed to text-white */}
+                        <p className="text-white font-medium leading-relaxed text-lg">{value.desc}</p>
                       </div>
                     </div>
                   </AnimatedSection>
@@ -585,7 +602,7 @@ const AboutUs = () => {
           </div>
         </section>
 
-        {/* CTA Section - Deep Blue */}
+        {/* CTA Section */}
         <section 
           className="relative py-20 sm:py-24 bg-gradient-to-br from-slate-900 via-[#084062] to-blue-900 overflow-hidden"
         >
@@ -603,7 +620,8 @@ const AboutUs = () => {
                 <h2 className="text-5xl md:text-6xl font-black text-white mb-10">
                   Ready to Transform Your Finances?
                 </h2>
-                <p className="text-2xl text-gray-200 mb-14 leading-relaxed">
+                {/* Changed to text-white */}
+                <p className="text-2xl text-white font-medium mb-14 leading-relaxed">
                   Join thousands who've taken control of their financial future. No credit card required. No commitment. Just clarity.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-6 justify-center">
@@ -622,15 +640,14 @@ const AboutUs = () => {
         </section>
       </main>
 
-      {/* --- Footer --- */}
-      <footer 
-        className="relative border-t border-white/10 bg-slate-900"
-      >
-        <div className="container mx-auto px-6 lg:px-12 py-16">
+      {/* --- Footer (COMPACT VERSION) --- */}
+      <footer className="relative border-t border-white/10 bg-slate-900">
+        <div className="container mx-auto px-6 lg:px-12 py-8"> {/* Reduced padding from py-16 to py-8 */}
           <AnimatedSection>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8"> {/* Reduced gap from gap-12 to gap-8, mb-12 to mb-8 */}
+              
               <div className="md:col-span-2">
-                <Link to="/" className="flex items-center gap-3 mb-6 group">
+                <Link to="/" className="flex items-center gap-3 mb-4 group"> {/* Reduced mb-6 to mb-4 */}
                   <div className="transform transition-transform group-hover:scale-110 group-hover:rotate-12">
                     <LogoIcon />
                   </div>
@@ -638,38 +655,42 @@ const AboutUs = () => {
                     Equi<span className="text-yellow-400">Track</span>
                   </span>   
                 </Link>
-                <p className="text-gray-300 max-w-md leading-relaxed mb-6">
+                <p className="text-gray-300 text-sm max-w-md leading-relaxed mb-4"> {/* Changed to text-sm and mb-4 */}
                   Built with passion by CIT-U students. Making financial management accessible, secure, and empowering for everyone.
                 </p>
+                
+                {/* Social Icons */}
                 <div className="flex gap-4 text-white">
-                  <a href="https://www.facebook.com/profile.php?id=61582991625112" target="_blank" rel="noopener noreferrer" className="p-3 bg-white/10 rounded-lg hover:bg-blue-600 transition-all hover:scale-110">
+                  <a href="https://www.facebook.com/profile.php?id=61582991625112" target="_blank" rel="noopener noreferrer" className="p-2 bg-white/10 rounded-lg hover:bg-blue-600 transition-all hover:scale-110">
                     <FacebookIcon />
                   </a>
-                  <a href="https://www.instagram.com/equitrack1/" target="_blank" rel="noopener noreferrer" className="p-3 bg-white/10 rounded-lg hover:bg-pink-600 transition-all hover:scale-110">
+                  <a href="https://www.instagram.com/equitrack1/" target="_blank" rel="noopener noreferrer" className="p-2 bg-white/10 rounded-lg hover:bg-pink-600 transition-all hover:scale-110">
                     <InstagramIcon />
                   </a>
                   <a 
                   href="https://mail.google.com/mail/?view=cm&fs=1&to=equitrack1@gmail.com&su=Inquiry%20about%20EquiTrack&body=Hello%20EquiTrack%20Team,%0A%0AI%20would%20like%20to%20get%20in%20touch%20with%20you%20regarding%20EquiTrack." 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  className="p-3 bg-white/10 rounded-lg hover:bg-yellow-400 hover:text-gray-900 transition-all hover:scale-110"
+                  className="p-2 bg-white/10 rounded-lg hover:bg-yellow-400 hover:text-gray-900 transition-all hover:scale-110"
                   >
                   <MailIcon />
                   </a>
                 </div>
               </div>
+
               <div>
-                <h4 className="text-white font-bold mb-4 text-lg">Quick Links</h4>
-                <ul className="space-y-3">
+                <h4 className="text-white font-bold mb-3 text-base">Quick Links</h4> {/* Reduced mb-4 to mb-3, text-lg to text-base */}
+                <ul className="space-y-2 text-sm"> {/* Reduced space-y-3 to space-y-2, added text-sm */}
                   <li><Link to="/landingpage" className="text-gray-300 hover:text-yellow-400 transition-colors">Home</Link></li>
                   <li><Link to="/aboutus" className="text-gray-300 hover:text-yellow-400 transition-colors">About Us</Link></li>
                   <li><Link to="/contactus" className="text-gray-300 hover:text-yellow-400 transition-colors">Contact</Link></li>
                   <li><Link to="/login" className="text-gray-300 hover:text-yellow-400 transition-colors">Login</Link></li>
                 </ul>
               </div>
+
               <div>
-                <h4 className="text-white font-bold mb-4 text-lg">Resources</h4>
-                <ul className="space-y-3">
+                <h4 className="text-white font-bold mb-3 text-base">Resources</h4> {/* Reduced mb-4 to mb-3, text-lg to text-base */}
+                <ul className="space-y-2 text-sm"> {/* Reduced space-y-3 to space-y-2, added text-sm */}
                   <li><button onClick={() => setModalContent(resourcesContent.help)} className="text-gray-300 hover:text-yellow-400 transition-colors text-left">Help Center</button></li>
                   <li><button onClick={() => setModalContent(resourcesContent.privacy)} className="text-gray-300 hover:text-yellow-400 transition-colors text-left">Privacy Policy</button></li>
                   <li><button onClick={() => setModalContent(resourcesContent.terms)} className="text-gray-300 hover:text-yellow-400 transition-colors text-left">Terms of Service</button></li>
@@ -678,12 +699,24 @@ const AboutUs = () => {
               </div>
             </div>
           </AnimatedSection>
-          <div className="pt-8 border-t border-white/10 text-center">
-            <p className="text-gray-400">
+          
+          <div className="pt-6 border-t border-white/10 text-center"> {/* Reduced pt-8 to pt-6 */}
+            <p className="text-gray-400 text-sm"> {/* Added text-sm */}
               © {new Date().getFullYear()} EquiTrack. Crafted with <span className="text-yellow-400">♥</span> by CIT-U Developers. All rights reserved.
             </p>
           </div>
         </div>
+
+        {/* Back to Top Button */}
+        {showScrollTop && (
+          <button
+            onClick={scrollToTop}
+            className="fixed bottom-8 right-8 p-3 bg-yellow-400 text-slate-900 rounded-full shadow-lg hover:bg-yellow-300 transition-all transform hover:scale-110 z-50 animate-bounce"
+            aria-label="Back to top"
+          >
+            <ArrowUp className="w-6 h-6" />
+          </button>
+        )}
       </footer>
       
       {modalContent && <Modal content={modalContent} onClose={() => setModalContent(null)} />}

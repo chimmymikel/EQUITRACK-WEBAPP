@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import { Mail, Phone, MapPin, Facebook, Instagram, Send, Wallet, Zap, MessageCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-// --- NO EXTENSIONS NEEDED: CSS ANIMATION ---
-// We inject this style directly so it works instantly
+// --- CUSTOM ANIMATION STYLE ---
+// This creates the "Pop Up" effect with a slight delay
 const PageAnimation = () => (
   <style>{`
-    @keyframes popIn {
+    @keyframes popInBottom {
       0% {
         opacity: 0;
-        transform: scale(0.95) translateY(10px);
+        transform: scale(0.9) translateY(50px); /* Starts smaller and lower */
       }
       100% {
         opacity: 1;
@@ -17,11 +17,11 @@ const PageAnimation = () => (
       }
     }
     
-    .animate-pop-in {
-      /* 0.5s duration, subtle bounce effect, 0.1s delay to let content load first */
-      animation: popIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-      opacity: 0; /* Start hidden so we don't see the jump */
-      animation-delay: 0.1s; 
+    .animate-card-entry {
+      opacity: 0; /* Initially hidden */
+      /* 0.2s delay, 0.8s duration, "Bouncy" effect */
+      animation: popInBottom 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+      animation-delay: 0.2s; 
     }
   `}</style>
 );
@@ -115,11 +115,11 @@ const ContactUs = () => {
                 <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-400 rounded-full blur-3xl opacity-20 animate-pulse" style={{ animationDelay: '2s' }}></div>
             </div>
 
-            {/* Main Content Area - ADDED 'animate-pop-in' class here */}
-            <div className="relative z-10 flex-grow flex items-center justify-center p-4 lg:p-6 mt-12 animate-pop-in">
+            {/* Main Content Area */}
+            <div className="relative z-10 flex-grow flex items-center justify-center p-4 lg:p-6 mt-12">
                 
-                {/* Main Card */}
-                <div className="w-full max-w-6xl h-[80vh] min-h-[600px] bg-slate-900/40 backdrop-blur-xl rounded-3xl border border-white/10 shadow-2xl ring-1 ring-white/5 flex flex-col lg:flex-row overflow-hidden">
+                {/* Main Card - APPLIED ANIMATION HERE */}
+                <div className="w-full max-w-6xl h-[80vh] min-h-[600px] bg-slate-900/40 backdrop-blur-xl rounded-3xl border border-white/10 shadow-2xl ring-1 ring-white/5 flex flex-col lg:flex-row overflow-hidden animate-card-entry">
                     
                     {/* LEFT PANEL */}
                     <div className="hidden lg:flex w-5/12 bg-black/20 p-8 xl:p-10 flex-col relative">
@@ -242,7 +242,7 @@ const ContactUs = () => {
                                 </div>
                             </div>
 
-                            {/* Footer Area - Added mb-2 for spacing */}
+                            {/* Footer Area */}
                             <div className="mt-4 mb-2">
                                 {submitStatus === 'success' && (
                                     <div className="mb-4 p-3 bg-green-500/20 border border-green-400/50 rounded-xl">
