@@ -10,6 +10,7 @@ import AboutUs from "./pages/AboutUs";
 import ContactUs from "./pages/ContactUs";
 import Home from "./pages/Home";
 import LandingPage from "./pages/LandingPage";
+import Profile from "./pages/Profile";
 
 const App = () => {
   return(
@@ -28,6 +29,7 @@ const App = () => {
             <Route path="/signup" element={<Signup />} />
             <Route path="/aboutus" element={<AboutUs />} />
             <Route path="/contactus" element={<ContactUs />} />
+            <Route path="/profile" element={<Profile />} />
         </Routes>
     </BrowserRouter>
     </>

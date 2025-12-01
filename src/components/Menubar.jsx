@@ -65,9 +65,17 @@ const Menubar = ({ activeMenu }) => {
                 <div className="relative" ref={dropdownRef}>
                     <button
                         onClick={() => setShowDropdown(!showDropdown)}
-                        className="flex items-center justify-center w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-800 focus:ring-offset-2"
+                        className="flex items-center justify-center w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-800 focus:ring-offset-2 overflow-hidden"
                     >
-                        <User className="text-purple-500" />
+                        {user?.profileImageUrl ? (
+                            <img 
+                                src={user.profileImageUrl} 
+                                alt={user.fullName || "Profile"} 
+                                className="w-full h-full object-cover"
+                            />
+                        ) : (
+                            <User className="text-purple-500" />
+                        )}
                     </button>
 
                     {/* Dropdown menu */}
@@ -76,12 +84,20 @@ const Menubar = ({ activeMenu }) => {
                             {/* User info */}
                             <div className="px-4 py-3 border-b border-gray-100">
                                 <div className="flex items-center gap-3">
-                                    <div className="flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full">
-                                        <User className="w-4 h-4 text-purple-600" />
+                                    <div className="flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full overflow-hidden">
+                                        {user?.profileImageUrl ? (
+                                            <img 
+                                                src={user.profileImageUrl} 
+                                                alt={user.fullName || "Profile"} 
+                                                className="w-full h-full object-cover"
+                                            />
+                                        ) : (
+                                            <User className="w-4 h-4 text-purple-600" />
+                                        )}
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <p className="text-sm font-medium text-gray-800 truncate">
-                                            {user?.fullName}
+                                            {user?.fullName || "User"}
                                         </p>
                                         <p className="text-xs text-gray-500 truncate">{user?.email}</p>
                                     </div>
@@ -90,6 +106,13 @@ const Menubar = ({ activeMenu }) => {
 
                             {/* Dropdown options */}
                             <div className="py-1">
+                                <button
+                                    onClick={() => { setShowDropdown(false); navigate('/profile'); }}
+                                    className="flex items-center gap-3 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150"
+                                >
+                                    <User className="w-4 h-4 text-gray-500" />
+                                    <span>Profile</span>
+                                </button>
                                 <button
                                     onClick={handleLogout}
                                     className="flex items-center gap-3 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150"
