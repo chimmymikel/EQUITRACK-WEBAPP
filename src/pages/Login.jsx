@@ -6,6 +6,21 @@ import toast from "react-hot-toast";
 import { LoaderCircle, Eye, EyeOff, Wallet, Shield, Zap } from "lucide-react";
 import { validateEmail } from "../util/validation.js";
 
+// --- ANIMATION STYLE ---
+const PageAnimation = () => (
+  <style>{`
+    @keyframes popIn {
+      0% { opacity: 0; transform: scale(0.95) translateY(20px); }
+      100% { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .animate-pop-in {
+      opacity: 0;
+      animation: popIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      animation-delay: 0.1s;
+    }
+  `}</style>
+);
+
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -65,8 +80,12 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen w-full relative flex items-center justify-center bg-gradient-to-br from-slate-900 via-[#084062] to-blue-900 px-4 py-8 lg:py-0 pt-12 overflow-x-hidden">
+    // Container: min-h-screen allows growth, lg:py-0 locks height on desktop
+    <div className="min-h-screen w-full relative flex items-center justify-center bg-gradient-to-br from-slate-900 via-[#084062] to-blue-900 px-4 py-6 lg:py-0 overflow-x-hidden">
       
+      {/* Inject Animation Styles */}
+      <PageAnimation />
+
       {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-yellow-400 rounded-full blur-3xl opacity-20 animate-pulse"></div>
@@ -75,10 +94,11 @@ const Login = () => {
       </div>
 
       {/* Main Content Container */}
-      <div className="relative z-10 w-full max-w-7xl flex flex-col lg:flex-row items-center justify-between gap-10 lg:gap-20">
+      <div className="relative z-10 w-full max-w-7xl flex flex-col lg:flex-row items-center justify-between gap-10 lg:gap-20 animate-pop-in">
         
         {/* Left Side - Branding & Features */}
-        <div className="flex-1 w-full text-white space-y-8 text-center lg:text-left">
+        {/* HIDDEN on mobile (hidden lg:flex) to ensure single card view */}
+        <div className="hidden lg:flex flex-1 w-full flex-col justify-center text-white space-y-8 text-left">
           <div className="space-y-4">
             <Link to="/" className="inline-flex items-center gap-3 group mx-auto lg:mx-0">
               <div className="w-12 h-12 bg-yellow-400 rounded-xl flex items-center justify-center transform group-hover:scale-110 group-hover:rotate-12 transition-all duration-300">
@@ -137,7 +157,18 @@ const Login = () => {
         <div className="flex-1 w-full max-w-lg">
           <div className="bg-white/10 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/20 p-8">
             
+            {/* Mobile Header (Visible only on mobile) */}
+            <div className="text-center mb-4 lg:hidden">
+                <Link to="/" className="inline-flex items-center gap-2 group mb-2">
+                <div className="w-8 h-8 bg-yellow-400 rounded-lg flex items-center justify-center">
+                    <Wallet className="w-5 h-5 text-blue-900" />
+                </div>
+                <span className="text-2xl font-black text-white">Equi<span className="text-yellow-400">Track</span></span>
+                </Link>
+            </div>
+
             <div className="text-center mb-6">
+              {/* RESTORED "Sign In to EquiTrack" */}
               <h2 className="text-3xl font-black text-white mb-2">
                 Sign In to <span className="text-yellow-400">EquiTrack</span>
               </h2>
