@@ -17,13 +17,121 @@ const Budget = () => {
     
     const [budgets, setBudgets] = useState([]);
     const [categories, setCategories] = useState([]);
+    const [expenses, setExpenses] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [selectedPeriod, setSelectedPeriod] = useState('ALL'); // ALL, MONTHLY, WEEKLY
+    const [selectedPeriod, setSelectedPeriod] = useState('ALL');
 
     const [openAddBudgetModal, setOpenAddBudgetModal] = useState(false);
     const [openDeleteAlert, setOpenDeleteAlert] = useState({ show: false, data: null });
 
     const profileId = user?.id;
+
+    // Helper function to calculate date ranges based on period
+    const getDateRangeForPeriod = (period) => {
+        const now = new Date();
+        const startDate = new Date();
+        
+        if (period === 'WEEKLY') {
+            startDate.setDate(now.getDate() - now.getDay());
+            startDate.setHours(0, 0, 0, 0);
+        } else if (period === 'MONTHLY') {
+            startDate.setDate(1);
+            startDate.setHours(0, 0, 0, 0);
+        }
+        
+        return {
+            startDate: startDate.toISOString().split('T')[0],
+            endDate: now.toISOString().split('T')[0]
+        };
+    };
+
+    // Calculate current spending for each budget
+    const calculateBudgetSpending = (budgets, expenses) => {
+        if (!budgets || budgets.length === 0) {
+            console.log('⚠️ No budgets to calculate');
+            return [];
+        }
+        
+        if (!expenses || expenses.length === 0) {
+            console.log('⚠️ No expenses found');
+            return budgets.map(budget => ({
+                ...budget,
+                currentSpending: 0,
+                remainingAmount: budget.limitAmount,
+                percentageUsed: 0
+            }));
+        }
+
+        return budgets.map(budget => {
+            // Check if categoryId exists in budget object or nested in category
+            const budgetCategoryId = budget.categoryId || budget.category?.id;
+            
+            console.log(`\n💰 Calculating budget for category ${budgetCategoryId}:`);
+            console.log('  Budget object:', budget);
+            
+            let relevantExpenses = expenses.filter(
+                expense => {
+                    // Try both number and string comparison
+                    const matches = expense.categoryId == budgetCategoryId;
+                    if (matches) {
+                        console.log(`  ✓ Matched expense: ${expense.name} - ₱${expense.amount} (categoryId: ${expense.categoryId})`);
+                    }
+                    return matches;
+                }
+            );
+
+            console.log(`  Found ${relevantExpenses.length} matching expenses`);
+
+            // Filter expenses by period if not 'ALL'
+            if (budget.period !== 'ALL') {
+                const { startDate } = getDateRangeForPeriod(budget.period);
+                console.log(`  Filtering by period ${budget.period}, start date: ${startDate}`);
+                
+                const beforeFilter = relevantExpenses.length;
+                relevantExpenses = relevantExpenses.filter(
+                    expense => {
+                        const isInPeriod = expense.date >= startDate;
+                        console.log(`    Expense date ${expense.date} >= ${startDate}: ${isInPeriod}`);
+                        return isInPeriod;
+                    }
+                );
+                console.log(`  After period filter: ${relevantExpenses.length}/${beforeFilter} expenses`);
+            }
+
+            const currentSpending = relevantExpenses.reduce(
+                (sum, expense) => sum + Number(expense.amount || 0), 
+                0
+            );
+
+            console.log(`  💵 Total spending: ₱${currentSpending}`);
+            console.log(`  📊 Budget limit: ₱${budget.limitAmount}`);
+
+            return {
+                ...budget,
+                currentSpending,
+                remainingAmount: budget.limitAmount - currentSpending,
+                percentageUsed: (currentSpending / budget.limitAmount) * 100
+            };
+        });
+    };
+
+    // Fetch all expenses
+    const fetchExpenses = async () => {
+        try {
+            console.log('📥 Fetching expenses...');
+            const response = await axiosConfig.get(API_ENDPOINTS.GET_ALL_EXPENSES);
+            if (response.status === 200) {
+                const expenseArray = response.data?.data || response.data?.expenses || response.data || [];
+                console.log('✅ Expenses fetched:', expenseArray.length, 'items');
+                console.log('Sample expense:', expenseArray[0]);
+                setExpenses(expenseArray);
+                return expenseArray;
+            }
+        } catch (error) {
+            console.error('❌ Failed to fetch expenses:', error);
+            return [];
+        }
+    };
 
     // Fetch all budgets
     const fetchBudgets = async () => {
@@ -31,17 +139,23 @@ const Budget = () => {
         setLoading(true);
 
         try {
-            console.log('Fetching budgets for profile:', profileId);
+            console.log('📥 Fetching budgets for profile:', profileId);
             const endpoint = selectedPeriod === 'ALL' 
                 ? API_ENDPOINTS.GET_BUDGETS(profileId)
                 : API_ENDPOINTS.GET_BUDGETS_BY_PERIOD(profileId, selectedPeriod);
                 
             const response = await axiosConfig.get(endpoint);
             if (response.status === 200) {
+                console.log('✅ Budgets fetched:', response.data.length, 'items');
+                console.log('Sample budget:', response.data[0]);
                 setBudgets(response.data);
+                
+                // Fetch expenses and wait for it to complete
+                const fetchedExpenses = await fetchExpenses();
+                console.log('🔄 Both budgets and expenses loaded');
             }
         } catch (error) {
-            console.error('Failed to fetch budgets:', error);
+            console.error('❌ Failed to fetch budgets:', error);
             toast.error(error.response?.data?.message || "Failed to fetch budgets");
         } finally {
             setLoading(false);
@@ -123,7 +237,55 @@ const Budget = () => {
         console.log('✅ Profile ID loaded:', profileId);
         fetchBudgets();
         fetchExpenseCategories();
+
+        // Set up auto-refresh every 3 seconds (reduced from 5) to catch expense updates faster
+        const intervalId = setInterval(() => {
+            console.log('🔄 Auto-refreshing budgets...');
+            fetchBudgets();
+        }, 3000);
+
+        // Cleanup interval on unmount
+        return () => clearInterval(intervalId);
     }, [profileId, selectedPeriod]);
+
+    // Listen for focus event to refresh when user returns to tab
+    useEffect(() => {
+        const handleFocus = () => {
+            if (profileId) {
+                fetchBudgets();
+            }
+        };
+
+        window.addEventListener('focus', handleFocus);
+        return () => window.removeEventListener('focus', handleFocus);
+    }, [profileId]);
+
+    // Listen for expense updates from other components
+    useEffect(() => {
+        const handleExpenseUpdate = () => {
+            console.log('📊 Expense updated event received - refreshing budgets immediately...');
+            if (profileId) {
+                // Add a small delay to ensure the expense is saved in the backend first
+                setTimeout(() => {
+                    fetchBudgets();
+                }, 500);
+            }
+        };
+
+        window.addEventListener('expenseUpdated', handleExpenseUpdate);
+        return () => window.removeEventListener('expenseUpdated', handleExpenseUpdate);
+    }, [profileId]);
+
+    // Calculate spending whenever budgets or expenses change
+    const budgetsWithSpending = calculateBudgetSpending(budgets, expenses);
+
+    // Debug logging
+    useEffect(() => {
+        console.log('🔍 Debug Info:');
+        console.log('Budgets:', budgets);
+        console.log('Expenses:', expenses);
+        console.log('Budgets with Spending:', budgetsWithSpending);
+    }, [budgets, expenses]);
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-900 via-[#084062] to-blue-900 relative overflow-hidden">
@@ -145,7 +307,7 @@ const Budget = () => {
                     <div className="grid grid-cols-1 gap-6">
                         {/* Budget Overview */}
                         <BudgetOverview 
-                            budgetCount={budgets.length}
+                            budgetCount={budgetsWithSpending.length}
                             onAddBudget={() => setOpenAddBudgetModal(true)}
                             selectedPeriod={selectedPeriod}
                             onPeriodChange={setSelectedPeriod}
@@ -153,7 +315,7 @@ const Budget = () => {
 
                         {/* Budget List */}
                         <BudgetList
-                            budgets={budgets}
+                            budgets={budgetsWithSpending}
                             onDelete={(budgetId) => setOpenDeleteAlert({ show: true, data: budgetId })}
                         />
 

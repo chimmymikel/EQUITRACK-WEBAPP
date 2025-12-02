@@ -2,7 +2,7 @@ import { Target, Trash2, TrendingUp, Calendar } from "lucide-react";
 import { addThousandsSeparator } from "../util/util";
 
 const BudgetList = ({ budgets, onDelete }) => {
-    // Calculate progress percentage (for future: compare with actual spending)
+    // Calculate progress percentage
     const getProgressColor = (percentage) => {
         if (percentage >= 100) return 'bg-red-500';
         if (percentage >= 80) return 'bg-yellow-500';
@@ -32,9 +32,17 @@ const BudgetList = ({ budgets, onDelete }) => {
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {budgets.map((budget) => {
-                        // For now, showing 0% progress - will be calculated with actual expenses later
-                        const spent = 0; // TODO: Calculate from actual expenses
-                        const percentage = (spent / budget.limitAmount) * 100;
+                        // Use calculated spending from parent component
+                        const spent = budget.currentSpending || 0;
+                        const remaining = budget.remainingAmount || budget.limitAmount;
+                        const percentage = budget.percentageUsed || 0;
+
+                        // Log for debugging
+                        console.log(`Budget ${budget.category?.name}:`, {
+                            spent,
+                            limit: budget.limitAmount,
+                            percentage: percentage.toFixed(1) + '%'
+                        });
 
                         return (
                             <div 
@@ -89,6 +97,15 @@ const BudgetList = ({ budgets, onDelete }) => {
                                             style={{ width: `${Math.min(percentage, 100)}%` }}
                                         ></div>
                                     </div>
+                                </div>
+
+                                {/* Remaining Amount */}
+                                <div className="flex items-center justify-between text-xs mt-3 pt-3 border-t border-white/10">
+                                    <span className="text-gray-400 font-medium">Remaining</span>
+                                    <span className={`font-bold ${remaining < 0 ? 'text-red-400' : 'text-green-400'}`}>
+                                        ₱{addThousandsSeparator(Math.abs(remaining))}
+                                        {remaining < 0 && ' over'}
+                                    </span>
                                 </div>
 
                                 {/* Description if exists */}

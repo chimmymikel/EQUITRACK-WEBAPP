@@ -19,6 +19,11 @@ const Expense = () => {
     const [openAddExpenseModal, setOpenAddExpenseModal] = useState(false);
     const [openDeleteAlert, setOpenDeleteAlert] = useState({ show: false, data: null });
 
+    // Broadcast expense update event
+    const broadcastExpenseUpdate = () => {
+        window.dispatchEvent(new CustomEvent('expenseUpdated'));
+    };
+
     // Fetch expense details
     const fetchExpenseDetails = async () => {
         if (loading) return;
@@ -74,8 +79,11 @@ const Expense = () => {
             if (response.status === 201) {
                 setOpenAddExpenseModal(false);
                 toast.success("Expense added successfully");
-                fetchExpenseDetails();
-                fetchExpenseCategories();
+                await fetchExpenseDetails();
+                await fetchExpenseCategories();
+                
+                // Broadcast event to update budgets
+                broadcastExpenseUpdate();
             }
         } catch (error) {
             console.error('Error adding expense:', error);
@@ -89,7 +97,10 @@ const Expense = () => {
             await axiosConfig.delete(API_ENDPOINTS.DELETE_EXPENSE(id));
             setOpenDeleteAlert({ show: false, data: null });
             toast.success("Expense deleted successfully");
-            fetchExpenseDetails();
+            await fetchExpenseDetails();
+            
+            // Broadcast event to update budgets
+            broadcastExpenseUpdate();
         } catch (error) {
             console.error('Error deleting expense:', error);
             toast.error(error.response?.data?.message || "Failed to delete expense");
