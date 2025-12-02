@@ -11,6 +11,7 @@ import ContactUs from "./pages/ContactUs";
 import Home from "./pages/Home";
 import LandingPage from "./pages/LandingPage";
 import Profile from "./pages/Profile";
+import Wallet from "./pages/Wallet";  // ← Add this import
 
 const App = () => {
   return(
@@ -21,6 +22,7 @@ const App = () => {
             <Route path="/" element={<Root />} />
             <Route path="/landingpage" element={<LandingPage />} />
             <Route path="/dashboard" element={<Home />} />
+            <Route path="/wallets" element={<Wallet />} />  {/* ← Add this route */}
             <Route path="/income" element={<Income />} />
             <Route path="/expense" element={<Expense />} />
             <Route path="/category" element={<Category />} />
