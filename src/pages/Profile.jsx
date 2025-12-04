@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { User, Phone, Mail, Calendar, Briefcase, TrendingUp, TrendingDown, Wallet, Activity, Edit2, X, Check } from "lucide-react";
+import { User, Phone, Mail, Calendar, Briefcase, TrendingUp, TrendingDown, Wallet, Activity, Edit2, X, Check, ArrowLeft, Save } from "lucide-react";
 import { AppContext } from "../context/AppContext";
 import { useUser } from "../hooks/useUser";
 import axiosConfig from "../util/axiosConfig";
@@ -8,7 +8,7 @@ import uploadProfileImage from "../util/uploadProfileImage";
 import toast from "react-hot-toast";
 import ProfilePhotoSelector from "../components/ProfilePhotoSelector";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
+import Dashboard from "../components/Dashboard";
 
 const Profile = () => {
     useUser();
@@ -210,7 +210,7 @@ const Profile = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-[#084062] to-blue-900 relative overflow-hidden p-4 md:p-8">
+        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-[#084062] to-blue-900 relative overflow-hidden">
             {/* Background Effects */}
             <div className="absolute inset-0 pointer-events-none opacity-10">
                 <div className="absolute top-1/4 left-10 md:left-20 w-80 h-80 bg-yellow-400 rounded-full blur-3xl animate-pulse"></div>
@@ -224,279 +224,310 @@ const Profile = () => {
                 ></div>
             </div>
 
-            <div className="max-w-6xl mx-auto space-y-6 relative z-10">
-                <button
-                    onClick={() => navigate('/dashboard')}
-                    className="flex items-center gap-2 text-gray-300 hover:text-yellow-400 transition-colors font-semibold group"
-                >
-                    <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-                    Back to Dashboard
-                </button>
-                
-                {/* Header Section */}
-                <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-xl border border-white/20 rounded-2xl shadow-xl overflow-hidden">
-                    <div className="h-32 bg-gradient-to-r from-purple-600 via-purple-700 to-purple-800"></div>
-                    <div className="px-6 pb-6">
-                        <div className="flex flex-col md:flex-row md:items-end md:justify-between -mt-16 gap-4">
-                            <div className="flex flex-col sm:flex-row items-center sm:items-end gap-4">
-                                <div className="relative group">
-                                    <div className="w-32 h-32 rounded-full border-4 border-slate-800 bg-slate-700 overflow-hidden shadow-xl">
-                                        {user?.profileImageUrl ? (
-                                            <img 
-                                                src={user.profileImageUrl} 
-                                                alt={user?.fullName || "Profile"} 
-                                                className="w-full h-full object-cover"
-                                            />
-                                        ) : (
-                                            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-purple-400 to-purple-600">
-                                                <User className="w-16 h-16 text-white" />
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
+            <Dashboard activeMenu="Profile">
+                <div className="my-5 relative z-10 w-full">
+                    {/* Header with Back Button */}
+                    <div className="flex justify-between items-center mb-6">
+                        <div className="flex items-center gap-4">
+                            <button
+                                onClick={() => navigate('/dashboard')}
+                                className="flex items-center gap-2 px-4 py-2 bg-slate-800/60 hover:bg-slate-800/80 backdrop-blur-md border border-white/10 hover:border-yellow-400/50 text-gray-300 hover:text-yellow-400 transition-all font-semibold group rounded-lg shadow-lg"
+                            >
+                                <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+                                <span className="text-sm">Back</span>
+                            </button>
+                            <h2 className="text-2xl font-bold text-white">My Profile</h2>
+                        </div>
+                        
+                        {!isEditing && (
+                            <button
+                                onClick={() => setIsEditing(true)}
+                                className="flex items-center gap-2 px-6 py-2.5 bg-yellow-400 text-gray-900 rounded-lg font-bold shadow-lg hover:shadow-yellow-400/40 hover:scale-105 transition-all"
+                            >
+                                <Edit2 size={18} />
+                                Edit Profile
+                            </button>
+                        )}
+                    </div>
 
-                                <div className="text-center sm:text-left mb-2">
-                                    <h1 className="text-2xl md:text-3xl font-bold text-white">
-                                        {user?.fullName || "User"}
-                                    </h1>
-                                    <p className="text-gray-400 flex items-center gap-2 justify-center sm:justify-start mt-1">
-                                        <Calendar className="w-4 h-4" />
-                                        Member since {getMemberSince()}
-                                    </p>
+                    {/* Profile Header Card - Full Width */}
+                    <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-xl border border-white/20 rounded-xl shadow-xl p-6 mb-6">
+                        <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
+                            <div className="relative group flex-shrink-0">
+                                <div className="w-32 h-32 rounded-full border-4 border-yellow-400/30 bg-slate-700 overflow-hidden shadow-2xl ring-4 ring-yellow-400/10">
+                                    {user?.profileImageUrl ? (
+                                        <img 
+                                            src={user.profileImageUrl} 
+                                            alt={user?.fullName || "Profile"} 
+                                            className="w-full h-full object-cover"
+                                        />
+                                    ) : (
+                                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-yellow-400 to-yellow-600">
+                                            <User className="w-16 h-16 text-slate-900" />
+                                        </div>
+                                    )}
                                 </div>
                             </div>
 
-                            {!isEditing && (
-                                <button
-                                    onClick={() => setIsEditing(true)}
-                                    className="bg-yellow-400 hover:bg-yellow-500 text-gray-900 px-6 py-2.5 rounded-lg transition-all font-bold flex items-center gap-2 justify-center hover:scale-105 shadow-lg"
-                                >
-                                    <Edit2 className="w-4 h-4" />
-                                    Edit Profile
-                                </button>
+                            <div className="flex-1 text-center md:text-left">
+                                <h1 className="text-3xl font-bold text-white mb-3">
+                                    {user?.fullName || "User"}
+                                </h1>
+                                <div className="flex flex-wrap gap-4 justify-center md:justify-start">
+                                    <div className="flex items-center gap-2 px-4 py-2 bg-slate-700/40 rounded-lg border border-white/10">
+                                        <Mail className="w-4 h-4 text-yellow-400" />
+                                        <span className="text-sm text-gray-300">{user?.email || "Not provided"}</span>
+                                    </div>
+                                    <div className="flex items-center gap-2 px-4 py-2 bg-slate-700/40 rounded-lg border border-white/10">
+                                        <Calendar className="w-4 h-4 text-blue-400" />
+                                        <span className="text-sm text-gray-300">Member since {getMemberSince()}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Statistics Grid - Full Width */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                        {/* Total Balance */}
+                        <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-xl border border-white/20 rounded-xl p-6 hover:border-yellow-400/30 transition-all shadow-xl hover:scale-[1.02] hover:shadow-2xl">
+                            <div className="flex items-center justify-between mb-4">
+                                <div className="p-3 bg-purple-600/20 rounded-xl ring-2 ring-purple-500/20">
+                                    <Wallet className="w-7 h-7 text-purple-400" />
+                                </div>
+                                <span className={`text-xs font-bold px-3 py-1.5 rounded-full ${
+                                    stats.totalBalance >= 0 ? 'bg-green-500/20 text-green-400 ring-2 ring-green-500/30' : 'bg-red-500/20 text-red-400 ring-2 ring-red-500/30'
+                                }`}>
+                                    {stats.totalBalance >= 0 ? 'Positive' : 'Negative'}
+                                </span>
+                            </div>
+                            <h3 className="text-gray-400 text-sm font-semibold mb-2">Total Balance</h3>
+                            <p className={`text-2xl font-bold ${
+                                stats.totalBalance >= 0 ? 'text-green-400' : 'text-red-400'
+                            }`}>
+                                {formatCurrency(stats.totalBalance)}
+                            </p>
+                        </div>
+
+                        {/* Total Income */}
+                        <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-xl border border-white/20 rounded-xl p-6 hover:border-yellow-400/30 transition-all shadow-xl hover:scale-[1.02] hover:shadow-2xl">
+                            <div className="flex items-center justify-between mb-4">
+                                <div className="p-3 bg-green-600/20 rounded-xl ring-2 ring-green-500/20">
+                                    <TrendingUp className="w-7 h-7 text-green-400" />
+                                </div>
+                            </div>
+                            <h3 className="text-gray-400 text-sm font-semibold mb-2">Total Income</h3>
+                            <p className="text-2xl font-bold text-green-400">
+                                {formatCurrency(stats.totalIncome)}
+                            </p>
+                        </div>
+
+                        {/* Total Expenses */}
+                        <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-xl border border-white/20 rounded-xl p-6 hover:border-yellow-400/30 transition-all shadow-xl hover:scale-[1.02] hover:shadow-2xl">
+                            <div className="flex items-center justify-between mb-4">
+                                <div className="p-3 bg-red-600/20 rounded-xl ring-2 ring-red-500/20">
+                                    <TrendingDown className="w-7 h-7 text-red-400" />
+                                </div>
+                            </div>
+                            <h3 className="text-gray-400 text-sm font-semibold mb-2">Total Expenses</h3>
+                            <p className="text-2xl font-bold text-red-400">
+                                {formatCurrency(stats.totalExpense)}
+                            </p>
+                        </div>
+
+                        {/* Total Transactions */}
+                        <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-xl border border-white/20 rounded-xl p-6 hover:border-yellow-400/30 transition-all shadow-xl hover:scale-[1.02] hover:shadow-2xl">
+                            <div className="flex items-center justify-between mb-4">
+                                <div className="p-3 bg-blue-600/20 rounded-xl ring-2 ring-blue-500/20">
+                                    <Activity className="w-7 h-7 text-blue-400" />
+                                </div>
+                            </div>
+                            <h3 className="text-gray-400 text-sm font-semibold mb-2">Total Transactions</h3>
+                            <p className="text-2xl font-bold text-white">{getTotalTransactions()}</p>
+                            <p className="text-xs text-gray-500 mt-2">Most used: {getMostUsedCategory()}</p>
+                        </div>
+                    </div>
+
+                    {/* Main Content Section - Enhanced */}
+                    <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-xl border border-white/20 rounded-xl shadow-2xl p-6">
+                        <div className="flex items-center justify-between mb-6 pb-4 border-b border-white/10">
+                            <h2 className="text-xl font-bold text-white flex items-center gap-3">
+                                <div className="p-2 bg-yellow-400/20 rounded-lg">
+                                    <User className="w-6 h-6 text-yellow-400" />
+                                </div>
+                                {isEditing ? "Edit Profile Information" : "Profile Information"}
+                            </h2>
+                            {isEditing && (
+                                <div className="flex gap-3">
+                                    <button
+                                        onClick={handleSubmit}
+                                        disabled={loading}
+                                        className="flex items-center gap-2 px-6 py-2.5 bg-yellow-400 hover:bg-yellow-500 text-gray-900 rounded-lg font-bold transition-all disabled:opacity-60 disabled:cursor-not-allowed shadow-lg hover:scale-105"
+                                    >
+                                        {loading ? (
+                                            <>
+                                                <div className="w-5 h-5 border-2 border-gray-900 border-t-transparent rounded-full animate-spin"></div>
+                                                Saving...
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Save className="w-5 h-5" />
+                                                Save Changes
+                                            </>
+                                        )}
+                                    </button>
+                                    <button
+                                        onClick={handleCancel}
+                                        disabled={loading}
+                                        className="flex items-center gap-2 px-6 py-2.5 bg-slate-700/50 hover:bg-slate-700 text-white rounded-lg font-semibold transition-all disabled:opacity-60"
+                                    >
+                                        <X className="w-5 h-5" />
+                                        Cancel
+                                    </button>
+                                </div>
                             )}
                         </div>
-                    </div>
-                </div>
 
-                {/* Account Statistics Dashboard */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    {/* Total Balance */}
-                    <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-xl border border-white/20 rounded-2xl p-6 hover:border-yellow-400/30 transition-all shadow-xl">
-                        <div className="flex items-center justify-between mb-3">
-                            <div className="p-3 bg-purple-600/20 rounded-xl">
-                                <Wallet className="w-6 h-6 text-purple-400" />
-                            </div>
-                            <span className={`text-xs font-bold px-2 py-1 rounded-full ${
-                                stats.totalBalance >= 0 ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
-                            }`}>
-                                {stats.totalBalance >= 0 ? 'Positive' : 'Negative'}
-                            </span>
-                        </div>
-                        <h3 className="text-gray-400 text-sm font-semibold mb-1">Total Balance</h3>
-                        <p className={`text-2xl font-bold ${
-                            stats.totalBalance >= 0 ? 'text-green-400' : 'text-red-400'
-                        }`}>
-                            {formatCurrency(stats.totalBalance)}
-                        </p>
-                    </div>
-
-                    {/* Total Income */}
-                    <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-xl border border-white/20 rounded-2xl p-6 hover:border-yellow-400/30 transition-all shadow-xl">
-                        <div className="flex items-center justify-between mb-3">
-                            <div className="p-3 bg-green-600/20 rounded-xl">
-                                <TrendingUp className="w-6 h-6 text-green-400" />
-                            </div>
-                        </div>
-                        <h3 className="text-gray-400 text-sm font-semibold mb-1">Total Income</h3>
-                        <p className="text-2xl font-bold text-green-400">
-                            {formatCurrency(stats.totalIncome)}
-                        </p>
-                    </div>
-
-                    {/* Total Expenses */}
-                    <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-xl border border-white/20 rounded-2xl p-6 hover:border-yellow-400/30 transition-all shadow-xl">
-                        <div className="flex items-center justify-between mb-3">
-                            <div className="p-3 bg-red-600/20 rounded-xl">
-                                <TrendingDown className="w-6 h-6 text-red-400" />
-                            </div>
-                        </div>
-                        <h3 className="text-gray-400 text-sm font-semibold mb-1">Total Expenses</h3>
-                        <p className="text-2xl font-bold text-red-400">
-                            {formatCurrency(stats.totalExpense)}
-                        </p>
-                    </div>
-
-                    {/* Total Transactions */}
-                    <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-xl border border-white/20 rounded-2xl p-6 hover:border-yellow-400/30 transition-all shadow-xl">
-                        <div className="flex items-center justify-between mb-3">
-                            <div className="p-3 bg-blue-600/20 rounded-xl">
-                                <Activity className="w-6 h-6 text-blue-400" />
-                            </div>
-                        </div>
-                        <h3 className="text-gray-400 text-sm font-semibold mb-1">Total Transactions</h3>
-                        <p className="text-2xl font-bold text-white">{getTotalTransactions()}</p>
-                        <p className="text-xs text-gray-500 mt-1">Most used: {getMostUsedCategory()}</p>
-                    </div>
-                </div>
-
-                {/* Profile Information & Edit Form */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    {/* Contact Information */}
-                    <div className="lg:col-span-1">
-                        <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-xl border border-white/20 rounded-2xl p-6 shadow-xl">
-                            <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                                <User className="w-5 h-5 text-yellow-400" />
-                                Contact Information
-                            </h2>
-                            <div className="space-y-4">
-                                <div className="flex items-start gap-3">
-                                    <Mail className="w-5 h-5 text-gray-400 mt-0.5" />
-                                    <div className="flex-1 min-w-0">
-                                        <p className="text-xs text-gray-500 mb-1">Email</p>
-                                        <p className="text-sm text-white font-semibold truncate">
-                                            {user?.email || "Not provided"}
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <div className="flex items-start gap-3">
-                                    <Phone className="w-5 h-5 text-gray-400 mt-0.5" />
-                                    <div className="flex-1 min-w-0">
-                                        <p className="text-xs text-gray-500 mb-1">Phone</p>
-                                        <p className="text-sm text-white font-semibold">
-                                            {user?.phone || "Not provided"}
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <div className="flex items-start gap-3">
-                                    <Briefcase className="w-5 h-5 text-gray-400 mt-0.5" />
-                                    <div className="flex-1 min-w-0">
-                                        <p className="text-xs text-gray-500 mb-1">Bio</p>
-                                        <p className="text-sm text-white">
-                                            {user?.bio || "No bio yet"}
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Edit Form */}
-                    <div className="lg:col-span-2">
-                        <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-xl border border-white/20 rounded-2xl p-6 shadow-xl">
-                            <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                                <Edit2 className="w-5 h-5 text-yellow-400" />
-                                {isEditing ? "Edit Your Information" : "Your Information"}
-                            </h2>
-
-                            <div className="space-y-4">
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            {/* Left Column - Photo & Contact Info */}
+                            <div className="space-y-6">
                                 {isEditing && (
-                                    <div>
-                                        <label className="text-sm font-semibold text-white block mb-2">
+                                    <div className="bg-slate-700/30 rounded-xl p-5 border border-white/10">
+                                        <label className="text-sm font-bold text-white block mb-3 flex items-center gap-2">
+                                            <User className="w-4 h-4 text-yellow-400" />
                                             Profile Photo
                                         </label>
                                         <ProfilePhotoSelector image={image} setImage={setImage} />
                                     </div>
                                 )}
 
-                                <div>
-                                    <label className="text-sm font-semibold text-white block mb-2">
-                                        Full Name
-                                    </label>
-                                    <input
-                                        type="text"
-                                        value={form.fullName}
-                                        onChange={handleChange("fullName")}
-                                        placeholder="John Doe"
-                                        disabled={!isEditing || loading}
-                                        className={`w-full px-4 py-2.5 border border-white/20 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 outline-none transition-colors text-white ${
-                                            !isEditing ? 'bg-slate-700/30 cursor-not-allowed' : 'bg-slate-700/50'
-                                        }`}
-                                    />
-                                </div>
+                                <div className="bg-slate-700/30 rounded-xl p-5 border border-white/10">
+                                    <h3 className="text-sm font-bold text-white mb-4 flex items-center gap-2">
+                                        <Mail className="w-4 h-4 text-yellow-400" />
+                                        Contact Details
+                                    </h3>
+                                    <div className="space-y-4">
+                                        <div className="flex items-start gap-3 p-3 bg-slate-600/30 rounded-lg border border-white/5">
+                                            <div className="p-2 bg-slate-700/50 rounded-lg">
+                                                <Mail className="w-4 h-4 text-yellow-400" />
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <p className="text-xs text-gray-500 mb-1 font-semibold">Email Address</p>
+                                                <p className="text-sm text-white font-semibold truncate">
+                                                    {user?.email || "Not provided"}
+                                                </p>
+                                            </div>
+                                        </div>
 
-                                <div>
-                                    <label className="text-sm font-semibold text-white block mb-2">
-                                        Email Address
-                                        <span className="text-xs text-gray-400 ml-2">(Cannot be changed)</span>
-                                    </label>
-                                    <input
-                                        type="email"
-                                        value={user?.email || ""}
-                                        disabled
-                                        className="w-full px-4 py-2.5 border border-white/20 rounded-lg bg-slate-700/30 cursor-not-allowed text-gray-400"
-                                    />
-                                </div>
+                                        <div className="flex items-start gap-3 p-3 bg-slate-600/30 rounded-lg border border-white/5">
+                                            <div className="p-2 bg-slate-700/50 rounded-lg">
+                                                <Phone className="w-4 h-4 text-green-400" />
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <p className="text-xs text-gray-500 mb-1 font-semibold">Phone Number</p>
+                                                <p className="text-sm text-white font-semibold">
+                                                    {user?.phone || "Not provided"}
+                                                </p>
+                                            </div>
+                                        </div>
 
-                                <div>
-                                    <label className="text-sm font-semibold text-white block mb-2">
-                                        Phone Number
-                                    </label>
-                                    <input
-                                        type="text"
-                                        value={form.phone}
-                                        onChange={handleChange("phone")}
-                                        placeholder="09261540612"
-                                        disabled={!isEditing || loading}
-                                        className={`w-full px-4 py-2.5 border border-white/20 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 outline-none transition-colors text-white ${
-                                            !isEditing ? 'bg-slate-700/30 cursor-not-allowed' : 'bg-slate-700/50'
-                                        }`}
-                                    />
-                                </div>
-
-                                <div>
-                                    <label className="text-sm font-semibold text-white block mb-2">
-                                        Bio
-                                    </label>
-                                    <textarea
-                                        value={form.bio}
-                                        onChange={handleChange("bio")}
-                                        placeholder="Tell us about yourself..."
-                                        rows={4}
-                                        disabled={!isEditing || loading}
-                                        className={`w-full px-4 py-2.5 border border-white/20 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 outline-none transition-colors resize-none text-white ${
-                                            !isEditing ? 'bg-slate-700/30 cursor-not-allowed' : 'bg-slate-700/50'
-                                        }`}
-                                    />
-                                </div>
-
-                                {isEditing && (
-                                    <div className="flex gap-3 pt-2">
-                                        <button
-                                            onClick={handleSubmit}
-                                            disabled={loading}
-                                            className="flex-1 bg-yellow-400 hover:bg-yellow-500 text-gray-900 px-6 py-2.5 rounded-lg font-bold transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 hover:scale-105 shadow-lg"
-                                        >
-                                            {loading ? (
-                                                <>
-                                                    <div className="w-4 h-4 border-2 border-gray-900 border-t-transparent rounded-full animate-spin"></div>
-                                                    Saving...
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <Check className="w-4 h-4" />
-                                                    Save Changes
-                                                </>
-                                            )}
-                                        </button>
-
-                                        <button
-                                            onClick={handleCancel}
-                                            disabled={loading}
-                                            className="flex-1 bg-slate-700/50 hover:bg-slate-700 text-white px-6 py-2.5 rounded-lg font-semibold transition-all disabled:opacity-60 flex items-center justify-center gap-2"
-                                        >
-                                            <X className="w-4 h-4" />
-                                            Cancel
-                                        </button>
+                                        <div className="flex items-start gap-3 p-3 bg-slate-600/30 rounded-lg border border-white/5">
+                                            <div className="p-2 bg-slate-700/50 rounded-lg">
+                                                <Briefcase className="w-4 h-4 text-blue-400" />
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <p className="text-xs text-gray-500 mb-1 font-semibold">Bio</p>
+                                                <p className="text-sm text-white leading-relaxed">
+                                                    {user?.bio || "No bio added yet."}
+                                                </p>
+                                            </div>
+                                        </div>
                                     </div>
-                                )}
+                                </div>
+                            </div>
+
+                            {/* Right Column - Edit Form */}
+                            <div className="lg:col-span-2">
+                                <div className="bg-slate-700/30 rounded-xl p-6 border border-white/10">
+                                    <h3 className="text-sm font-bold text-white mb-5 flex items-center gap-2">
+                                        <Edit2 className="w-4 h-4 text-yellow-400" />
+                                        Personal Information
+                                    </h3>
+                                    
+                                    <div className="space-y-5">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                            <div>
+                                                <label className="text-sm font-bold text-white block mb-2 flex items-center gap-2">
+                                                    <User className="w-3.5 h-3.5 text-gray-400" />
+                                                    Full Name
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    value={form.fullName}
+                                                    onChange={handleChange("fullName")}
+                                                    placeholder="Enter your full name"
+                                                    disabled={!isEditing || loading}
+                                                    className={`w-full px-4 py-3 border border-white/20 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 outline-none transition-all text-white text-sm ${
+                                                        !isEditing ? 'bg-slate-600/30 cursor-not-allowed' : 'bg-slate-600/50 hover:bg-slate-600/60'
+                                                    }`}
+                                                />
+                                            </div>
+
+                                            <div>
+                                                <label className="text-sm font-bold text-white block mb-2 flex items-center gap-2">
+                                                    <Phone className="w-3.5 h-3.5 text-gray-400" />
+                                                    Phone Number
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    value={form.phone}
+                                                    onChange={handleChange("phone")}
+                                                    placeholder="09261540612"
+                                                    disabled={!isEditing || loading}
+                                                    className={`w-full px-4 py-3 border border-white/20 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 outline-none transition-all text-white text-sm ${
+                                                        !isEditing ? 'bg-slate-600/30 cursor-not-allowed' : 'bg-slate-600/50 hover:bg-slate-600/60'
+                                                    }`}
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <label className="text-sm font-bold text-white block mb-2 flex items-center gap-2">
+                                                <Mail className="w-3.5 h-3.5 text-gray-400" />
+                                                Email Address
+                                                <span className="text-xs text-gray-400 ml-auto font-normal">(Cannot be changed)</span>
+                                            </label>
+                                            <input
+                                                type="email"
+                                                value={user?.email || ""}
+                                                disabled
+                                                className="w-full px-4 py-3 border border-white/20 rounded-lg bg-slate-600/30 cursor-not-allowed text-gray-400 text-sm"
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label className="text-sm font-bold text-white block mb-2 flex items-center gap-2">
+                                                <Briefcase className="w-3.5 h-3.5 text-gray-400" />
+                                                Bio
+                                            </label>
+                                            <textarea
+                                                value={form.bio}
+                                                onChange={handleChange("bio")}
+                                                placeholder="Tell us about yourself..."
+                                                rows={5}
+                                                disabled={!isEditing || loading}
+                                                className={`w-full px-4 py-3 border border-white/20 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 outline-none transition-all resize-none text-white text-sm leading-relaxed ${
+                                                    !isEditing ? 'bg-slate-600/30 cursor-not-allowed' : 'bg-slate-600/50 hover:bg-slate-600/60'
+                                                }`}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </Dashboard>
         </div>
     );
 };
