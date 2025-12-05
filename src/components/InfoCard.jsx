@@ -1,34 +1,50 @@
-import { ArrowUpRight, ArrowDownRight } from "lucide-react";
+import React from 'react';
 
-const InfoCard = ({icon, label, value, color, trend}) => {
+const InfoCard = ({ icon, label, value }) => {
+    let theme = "purple"; 
+    if (label.toLowerCase().includes("income")) theme = "green";
+    if (label.toLowerCase().includes("expense")) theme = "red";
+
+    const themes = {
+        purple: { 
+            iconColor: "text-purple-400", 
+            bgColor: "bg-purple-500/10", 
+            borderColor: "border-purple-500/20",
+            glowColor: "from-purple-500/20 to-blue-600/20"
+        },
+        green: { 
+            iconColor: "text-emerald-400", 
+            bgColor: "bg-emerald-500/10", 
+            borderColor: "border-emerald-500/20",
+            glowColor: "from-emerald-500/20 to-green-600/20"
+        },
+        red: { 
+            iconColor: "text-rose-400", 
+            bgColor: "bg-rose-500/10", 
+            borderColor: "border-rose-500/20",
+            glowColor: "from-rose-500/20 to-red-600/20"
+        }
+    };
+    
+    const t = themes[theme];
+
     return (
-        <div className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-xl border border-white/20 p-6 hover:border-yellow-400/50 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:shadow-yellow-400/20">
-            {/* Animated gradient overlay on hover */}
-            <div className={`absolute inset-0 ${color} opacity-0 group-hover:opacity-20 transition-opacity duration-500 pointer-events-none`}></div>
+        <div className="bg-slate-900/40 backdrop-blur-md border border-white/10 rounded-2xl p-5 relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300 shadow-xl h-full flex items-center">
+            <div className={`absolute -right-6 -top-6 w-24 h-24 rounded-full bg-gradient-to-br ${t.glowColor} blur-2xl opacity-40 group-hover:opacity-70 transition-opacity`}></div>
             
-            {/* Subtle glow effect */}
-            <div className="absolute -inset-1 bg-gradient-to-r from-yellow-400/0 via-yellow-400/5 to-yellow-400/0 opacity-0 group-hover:opacity-100 blur transition-opacity duration-500"></div>
-            
-            <div className="relative z-10 flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                    <div className={`w-16 h-16 flex items-center justify-center text-white ${color} rounded-2xl shadow-xl group-hover:scale-110 group-hover:rotate-3 transition-all duration-300`}>
-                        <div className="text-[28px]">{icon}</div>
-                    </div>
-
-                    <div>
-                        <h6 className="text-sm text-gray-400 font-medium mb-1">{label}</h6>
-                        <span className="text-2xl font-bold text-white">
-                            ₱{value}
-                        </span>
+            <div className="relative z-10 flex items-center gap-4 w-full">
+                <div className={`w-14 h-14 shrink-0 rounded-2xl ${t.bgColor} border ${t.borderColor} flex items-center justify-center shadow-lg backdrop-blur-sm group-hover:scale-105 transition-transform duration-300`}>
+                    <div className={`w-7 h-7 ${t.iconColor} flex items-center justify-center`}>
+                        {icon}
                     </div>
                 </div>
-
-                {trend && (
-                    <div className={`flex items-center gap-1 px-3 py-1.5 rounded-full ${trend > 0 ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'} text-sm font-bold`}>
-                        {trend > 0 ? <ArrowUpRight className="w-4 h-4" /> : <ArrowDownRight className="w-4 h-4" />}
-                        {Math.abs(trend)}%
-                    </div>
-                )}
+                
+                <div className="flex flex-col justify-center min-w-0">
+                    <p className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1 truncate">{label}</p>
+                    <h3 className="text-2xl font-bold text-white tracking-tight leading-none truncate">
+                        ₱{value}
+                    </h3>
+                </div>
             </div>
         </div>
     );
