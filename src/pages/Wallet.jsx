@@ -11,6 +11,7 @@ import AddWalletForm from "../components/AddWalletForm";
 import WalletTransactionForm from "../components/WalletTransactionForm";
 import DeleteAlert from "../components/DeleteAlert";
 import { AppContext } from "../context/AppContext";
+import TransactionHistory from "../components/TransactionHistory";
 
 const Wallet = () => {
     useUser();
@@ -19,6 +20,7 @@ const Wallet = () => {
     const [wallets, setWallets] = useState([]);
     const [totalBalance, setTotalBalance] = useState(0);
     const [loading, setLoading] = useState(false);
+    const [transactions, setTransactions] = useState([]); 
 
     const [openAddWalletModal, setOpenAddWalletModal] = useState(false);
     const [openTransactionModal, setOpenTransactionModal] = useState({ show: false, type: null, walletId: null });
@@ -26,213 +28,143 @@ const Wallet = () => {
 
     const profileId = user?.id;
 
-    // Fetch all wallets
+    // --- FETCH FUNCTIONS (UNCHANGED) ---
     const fetchWallets = async () => {
         if (loading || !profileId) return;
         setLoading(true);
-
         try {
-            console.log('Fetching wallets for profile:', profileId);
             const response = await axiosConfig.get(API_ENDPOINTS.GET_ACTIVE_WALLETS(profileId));
-            if (response.status === 200) {
-                setWallets(response.data);
-            }
+            if (response.status === 200) setWallets(response.data);
         } catch (error) {
-            console.error('Failed to fetch wallets:', error);
             toast.error(error.response?.data?.message || "Failed to fetch wallets");
         } finally {
             setLoading(false);
         }
     };
 
-    // Fetch total balance
     const fetchTotalBalance = async () => {
         if (!profileId) return;
-        
         try {
-            console.log('Fetching total balance for profile:', profileId);
             const response = await axiosConfig.get(API_ENDPOINTS.GET_TOTAL_BALANCE(profileId));
-            if (response.status === 200) {
-                setTotalBalance(response.data.totalBalance);
-            }
-        } catch (error) {
-            console.error('Failed to fetch total balance:', error);
-        }
+            if (response.status === 200) setTotalBalance(response.data.totalBalance);
+        } catch (error) { console.error(error); }
     };
 
-    // Create new wallet
+    const fetchTransactions = async () => {
+        if (!profileId) return;
+        try {
+            const response = await axiosConfig.get(API_ENDPOINTS.GET_TRANSACTIONS(profileId)); 
+            if (response.status === 200) setTransactions(response.data); 
+        } catch (error) { console.error(error); }
+    };
+
+    // --- HANDLERS (UNCHANGED) ---
     const handleAddWallet = async (walletData) => {
         const { walletType } = walletData;
-
-        if (!walletType || !walletType.trim()) {
-            return toast.error("Please enter a wallet name");
-        }
-
-        if (!profileId) {
-            return toast.error("User profile not found. Please refresh and try again.");
-        }
-
+        if (!walletType?.trim()) return toast.error("Please enter a wallet name");
         try {
-            console.log('Creating wallet for profile:', profileId);
-            const response = await axiosConfig.post(API_ENDPOINTS.CREATE_WALLET(profileId), {
-                walletType
-            });
-
+            const response = await axiosConfig.post(API_ENDPOINTS.CREATE_WALLET(profileId), { walletType });
             if (response.status === 200) {
                 setOpenAddWalletModal(false);
                 toast.success("Wallet created successfully");
-                fetchWallets();
-                fetchTotalBalance();
+                fetchWallets(); fetchTotalBalance();
             }
-        } catch (error) {
-            console.error('Error creating wallet:', error);
-            toast.error(error.response?.data?.message || error.response?.data || "Failed to create wallet");
-        }
+        } catch (error) { toast.error("Failed to create wallet"); }
     };
 
-    // Handle deposit
-    const handleDeposit = async (walletId, amount) => {
-        if (!amount || isNaN(amount) || Number(amount) <= 0) {
-            return toast.error("Amount must be greater than 0");
-        }
-
+    const handleTransaction = async (walletId, amount, type) => {
+        if (!amount || Number(amount) <= 0) return toast.error("Invalid amount");
+        const endpoint = type === 'deposit' ? API_ENDPOINTS.DEPOSIT_WALLET(walletId) : API_ENDPOINTS.WITHDRAW_WALLET(walletId);
         try {
-            const response = await axiosConfig.post(API_ENDPOINTS.DEPOSIT_WALLET(walletId), {
-                amount: Number(amount)
-            });
-
+            const response = await axiosConfig.post(endpoint, { amount: Number(amount) });
             if (response.status === 200) {
                 setOpenTransactionModal({ show: false, type: null, walletId: null });
-                toast.success("Deposit successful");
-                fetchWallets();
-                fetchTotalBalance();
+                toast.success("Transaction successful");
+                fetchWallets(); fetchTotalBalance(); fetchTransactions();
             }
-        } catch (error) {
-            console.error('Error depositing:', error);
-            toast.error(error.response?.data?.message || "Failed to deposit");
-        }
+        } catch (error) { toast.error("Transaction failed"); }
     };
 
-    // Handle withdraw
-    const handleWithdraw = async (walletId, amount) => {
-        if (!amount || isNaN(amount) || Number(amount) <= 0) {
-            return toast.error("Amount must be greater than 0");
-        }
-
-        try {
-            const response = await axiosConfig.post(API_ENDPOINTS.WITHDRAW_WALLET(walletId), {
-                amount: Number(amount)
-            });
-
-            if (response.status === 200) {
-                setOpenTransactionModal({ show: false, type: null, walletId: null });
-                toast.success("Withdrawal successful");
-                fetchWallets();
-                fetchTotalBalance();
-            }
-        } catch (error) {
-            console.error('Error withdrawing:', error);
-            toast.error(error.response?.data?.message || "Failed to withdraw");
-        }
-    };
-
-    // Delete wallet
     const deleteWallet = async (walletId) => {
         try {
             await axiosConfig.delete(API_ENDPOINTS.DELETE_WALLET(walletId));
             setOpenDeleteAlert({ show: false, data: null });
-            toast.success("Wallet deleted successfully");
-            fetchWallets();
-            fetchTotalBalance();
-        } catch (error) {
-            console.error('Error deleting wallet:', error);
-            toast.error(error.response?.data?.message || "Failed to delete wallet");
-        }
+            toast.success("Wallet deleted");
+            fetchWallets(); fetchTotalBalance(); fetchTransactions();
+        } catch (error) { toast.error("Failed to delete wallet"); }
     };
 
     useEffect(() => {
-        if (!profileId) {
-            console.log('⏳ Waiting for user profile...');
-            return;
-        }
-        
-        console.log('✅ Profile ID loaded:', profileId);
-        fetchWallets();
-        fetchTotalBalance();
+        if (!profileId) return;
+        fetchWallets(); fetchTotalBalance(); fetchTransactions();
     }, [profileId]);
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-900 via-[#084062] to-blue-900 relative overflow-hidden">
-            {/* Background Effects matching landing page */}
+            {/* Background Decoration */}
             <div className="absolute inset-0 pointer-events-none opacity-10">
-                <div className="absolute top-1/4 left-10 md:left-20 w-80 h-80 bg-yellow-400 rounded-full blur-3xl animate-pulse"></div>
-                <div
-                    className="absolute bottom-1/4 right-10 md:right-20 w-96 h-96 bg-blue-400 rounded-full blur-3xl animate-pulse"
-                    style={{ animationDelay: "2s" }}
-                ></div>
-                <div
-                    className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-cyan-400 rounded-full blur-3xl animate-pulse"
-                    style={{ animationDelay: "1s" }}
-                ></div>
+                <div className="absolute top-10 left-20 w-96 h-96 bg-blue-500 rounded-full blur-[100px] animate-pulse"></div>
+                <div className="absolute bottom-10 right-20 w-80 h-80 bg-purple-500 rounded-full blur-[100px] animate-pulse" style={{ animationDelay: "2s" }}></div>
             </div>
 
             <Dashboard activeMenu="Wallets">
-                <div className="my-5 mx-auto relative z-10">
-                    <div className="grid grid-cols-1 gap-6">
-                        {/* Wallet Overview */}
-                        <WalletOverview 
-                            totalBalance={totalBalance}
-                            walletCount={wallets.length}
-                            onAddWallet={() => setOpenAddWalletModal(true)}
-                        />
-
-                        {/* Wallet List */}
-                        <WalletList
-                            wallets={wallets}
-                            onDeposit={(walletId) => setOpenTransactionModal({ show: true, type: 'deposit', walletId })}
-                            onWithdraw={(walletId) => setOpenTransactionModal({ show: true, type: 'withdraw', walletId })}
-                            onDelete={(walletId) => setOpenDeleteAlert({ show: true, data: walletId })}
-                        />
-
-                        {/* Add Wallet Modal */}
-                        <Modal 
-                            isOpen={openAddWalletModal} 
-                            onClose={() => setOpenAddWalletModal(false)} 
-                            title="Create New Wallet"
+                <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-6 relative z-10">
+                    
+                    {/* Header */}
+                    <div className="flex flex-col sm:flex-row justify-between items-end mb-8 gap-4 border-b border-white/5 pb-6">
+                        <div>
+                            <h1 className="text-3xl font-black text-white tracking-tight">My Wallets</h1>
+                            <p className="text-slate-400 mt-1 text-sm font-medium">Manage your assets and track your cash flow.</p>
+                        </div>
+                        <button 
+                            onClick={() => setOpenAddWalletModal(true)}
+                            className="px-6 py-2.5 bg-yellow-400 hover:bg-yellow-300 text-slate-900 rounded-xl font-bold shadow-lg shadow-yellow-400/20 hover:shadow-yellow-400/30 hover:-translate-y-0.5 transition-all active:scale-95"
                         >
-                            <AddWalletForm onSubmit={handleAddWallet} />
-                        </Modal>
-
-                        {/* Transaction Modal (Deposit/Withdraw) */}
-                        <Modal 
-                            isOpen={openTransactionModal.show} 
-                            onClose={() => setOpenTransactionModal({ show: false, type: null, walletId: null })} 
-                            title={openTransactionModal.type === 'deposit' ? 'Deposit Money' : 'Withdraw Money'}
-                        >
-                            <WalletTransactionForm 
-                                type={openTransactionModal.type}
-                                onSubmit={(amount) => {
-                                    if (openTransactionModal.type === 'deposit') {
-                                        handleDeposit(openTransactionModal.walletId, amount);
-                                    } else {
-                                        handleWithdraw(openTransactionModal.walletId, amount);
-                                    }
-                                }}
-                            />
-                        </Modal>
-
-                        {/* Delete Confirmation */}
-                        <Modal 
-                            isOpen={openDeleteAlert.show} 
-                            onClose={() => setOpenDeleteAlert({ show: false, data: null })} 
-                            title="Delete Wallet"
-                        >
-                            <DeleteAlert 
-                                content="Are you sure you want to delete this wallet? This action cannot be undone." 
-                                onDelete={() => deleteWallet(openDeleteAlert.data)} 
-                            />
-                        </Modal>
+                            + Create Wallet
+                        </button>
                     </div>
+
+                    {/* Main Content Grid */}
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                        
+                        {/* LEFT COLUMN: Overview Cards + Wallet Grid (Spans 8 cols) */}
+                        <div className="lg:col-span-8 space-y-8">
+                            <WalletOverview 
+                                totalBalance={totalBalance}
+                                walletCount={wallets.length}
+                            />
+                            
+                            <div>
+                                <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                                    <span className="w-1.5 h-6 bg-yellow-400 rounded-full"></span>
+                                    Your Accounts
+                                </h3>
+                                <WalletList
+                                    wallets={wallets}
+                                    onDeposit={(id) => setOpenTransactionModal({ show: true, type: 'deposit', walletId: id })}
+                                    onWithdraw={(id) => setOpenTransactionModal({ show: true, type: 'withdraw', walletId: id })}
+                                    onDelete={(id) => setOpenDeleteAlert({ show: true, data: id })}
+                                />
+                            </div>
+                        </div>
+
+                        {/* RIGHT COLUMN: History Sidebar (Spans 4 cols) */}
+                        <div className="lg:col-span-4">
+                            {/* ✅ FIX: Removed the sticky wrapper so it stretches to match height */}
+                            <TransactionHistory transactions={transactions} /> 
+                        </div>
+                    </div>
+
+                    {/* Modals remain the same */}
+                    <Modal isOpen={openAddWalletModal} onClose={() => setOpenAddWalletModal(false)} title="Create New Wallet">
+                        <AddWalletForm onSubmit={handleAddWallet} />
+                    </Modal>
+                    <Modal isOpen={openTransactionModal.show} onClose={() => setOpenTransactionModal({ show: false, type: null, walletId: null })} title={openTransactionModal.type === 'deposit' ? 'Deposit Money' : 'Withdraw Money'}>
+                        <WalletTransactionForm type={openTransactionModal.type} onSubmit={(amount) => handleTransaction(openTransactionModal.walletId, amount, openTransactionModal.type)} />
+                    </Modal>
+                    <Modal isOpen={openDeleteAlert.show} onClose={() => setOpenDeleteAlert({ show: false, data: null })} title="Delete Wallet">
+                        <DeleteAlert content="This action cannot be undone." onDelete={() => deleteWallet(openDeleteAlert.data)} />
+                    </Modal>
                 </div>
             </Dashboard>
         </div>

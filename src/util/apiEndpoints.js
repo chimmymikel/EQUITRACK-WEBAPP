@@ -45,6 +45,9 @@ export const API_ENDPOINTS = {
     DEACTIVATE_WALLET: (walletId) => `/wallets/${walletId}/deactivate`,
     DELETE_WALLET: (walletId) => `/wallets/${walletId}`,
     
+    // NEW ENDPOINT FOR TRANSACTION HISTORY (WalletActivityController)
+    GET_TRANSACTIONS: (profileId) => `/transactions/profile/${profileId}`, 
+    
     // Budgets
     CREATE_BUDGET: (profileId) => `/budgets/profile/${profileId}`,
     GET_BUDGETS: (profileId) => `/budgets/profile/${profileId}`,
