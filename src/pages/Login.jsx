@@ -244,7 +244,7 @@ const Login = () => {
                     </>
                   ) : (
                     <>
-                      Access My Account
+                      Sign In
                       <Zap className="w-5 h-5 group-hover:scale-110 transition-transform" />
                     </>
                   )}
@@ -253,12 +253,12 @@ const Login = () => {
 
               <div className="text-center pt-4">
                 <p className="text-gray-300">
-                  Don't have an account?{' '}
+                  New to EquiTrack?{' '}
                   <Link 
                     to="/signup" 
                     className="text-yellow-400 hover:text-yellow-300 font-bold underline transition-colors duration-300"
                   >
-                    Create Account
+                    Join Free
                   </Link>
                 </p>
               </div>
@@ -268,7 +268,7 @@ const Login = () => {
               <div className="flex items-center gap-3">
                 <Shield className="w-5 h-5 text-yellow-400 shrink-0" />
                 <p className="text-gray-300 text-sm">
-                  Your money is safer with a clear mindset
+                  Your financial data is secure and encrypted
                 </p>
               </div>
             </div>

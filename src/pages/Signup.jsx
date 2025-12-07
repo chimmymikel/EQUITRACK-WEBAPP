@@ -281,9 +281,6 @@ const Signup = () => {
                             <h2 className="text-2xl font-black text-white mb-1">
                                 Join <span className="text-yellow-400">EquiTrack</span>
                             </h2>
-                            <p className="text-gray-200 text-xs">
-                                Create your account in 30 seconds
-                            </p>
                         </div>
 
                         <form onSubmit={handleSubmit} className="space-y-3">
@@ -390,7 +387,7 @@ const Signup = () => {
                                         </>
                                     ) : (
                                         <>
-                                            Start Free Today
+                                            Get Started
                                             <Zap className="w-4 h-4 group-hover:scale-110 transition-transform" />
                                         </>
                                     )}

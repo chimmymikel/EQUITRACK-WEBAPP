@@ -51,7 +51,7 @@ const Home = () => {
     const displayName = getFirstName();
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-[#084062] to-blue-900 relative overflow-hidden font-sans text-white">
+        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-[#084062] to-blue-900 relative overflow-hidden text-white">
             
             {/* Ambient Effects */}
             <div className="absolute inset-0 pointer-events-none">
